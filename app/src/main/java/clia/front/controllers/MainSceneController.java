@@ -107,20 +107,19 @@ public class MainSceneController extends Controller {
                 }
             }
             case DISPLAY_MAIL_INFO -> {
-                StringBuilder bobTheBuilder = new StringBuilder();
-                bobTheBuilder.append("Welcome user. Mailbox content :\n");
-                // TODO : make it work with ugo's files
+                pushText("Welcome user. Mailbox content :");
                 cwd = cwd.getFolder("mail");
                 for (String line : cwd.getContent().split("\n")) {
-                    pushText(line);
+                    pushText(line.substring(0, line.length() - 4));
                 }
+                pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail number 1.");
                 cwd = cwd.getParent();
             }
             case DISPLAY_MAIL_CONTENT -> {
                 cwd = cwd.getFolder("mail");
-                for (String filename : resultAction.getArgs()) {
-                    pushText("Mail " + filename.substring(0, filename.length() - 4) + " :");
-                    for (String line : cwd.getFile(filename).getContent().split("\n")) {
+                for (String mailNumber : resultAction.getArgs()) {
+                    pushText("Mail " + mailNumber + " :");
+                    for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent().split("\n")) {
                         pushText(line);
                     }
                     pushText("");
