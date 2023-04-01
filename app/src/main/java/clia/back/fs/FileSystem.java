@@ -1,4 +1,4 @@
-package clia.fs;
+package clia.back.fs;
 
 public abstract class FileSystem {
     protected String name;
