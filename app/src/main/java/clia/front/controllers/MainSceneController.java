@@ -24,8 +24,12 @@ public class MainSceneController extends Controller {
     @FXML
     void initialize() {
         // TODO : this can be used as "clear" command code to execute in the handler if command == clear
-        inputTextField.setText("Welcome to TTWhy !");
-        handleInputTextFieldOnKeyReleased(new KeyEvent(null, null, null, "\n", "\n", KeyCode.ENTER, false, false, false, false));
+        command("Welcome to TTWhy !");
+        // TODO : make date = now - 20 min
+        // TODO : time loop duration is a variable
+        command("Last login: Fri Mar 31 15:17:09 2023 from 163.221.18.5");
+        command("You have two unread emails. Open mailbox via the 'mail' command.");
+        command("");
     }
 
     @FXML
@@ -49,5 +53,10 @@ public class MainSceneController extends Controller {
             if (i != lines.size() - 1) bobTheBuilder.append("\n");
         }
         return bobTheBuilder.toString();
+    }
+
+    private void command(String command) {
+        inputTextField.setText(command);
+        handleInputTextFieldOnKeyReleased(new KeyEvent(null, null, null, "\n", "\n", KeyCode.ENTER, false, false, false, false));
     }
 }
