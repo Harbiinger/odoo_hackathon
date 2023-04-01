@@ -31,21 +31,21 @@
       "content": [
         {
           "type": "File",
-          "name": "China Accounting Standards",
+          "name": "ChinaAccountingStandards",
           "ext": "txt",
           "perms": "Employee",
           "content": "The process of increasing economic openness and liberalization has been particularly prevalent in the past decade..."
         },
         {
           "type": "File",
-          "name": "Edoo 12 Development Essentials",
+          "name": "EdooDevelopmentEssentials",
           "ext": "txt",
           "perms": "Employee",
           "content": "Edoo is a fully-featured open source platform for building applications.\nBased on this core framework, a suite of integrated applications was built, covering all business areas..."
         },
         {
           "type": "File",
-          "name": "Linux : Administering",
+          "name": "LinuxAdministering",
           "ext": "txt",
           "perms": "Employee",
           "content": "Linux is a Unix-like and mostly POSIX-compliant computer operating system assembled under the model of free and open source software development and distribution..."
@@ -54,7 +54,7 @@
     },
     {
       "type": "Folder",
-      "name": "Staff only",
+      "name": "StaffOnly",
       "perms": "Manager",
       "content": [
         {
@@ -89,19 +89,21 @@
     },
     {
       "type": "Folder",
-      "name": "CEO Home",
+      "name": "CEOHome",
       "perms": "CEO",
       "content": [
         {
           "type": "File",
           "name": "notes",
           "perms": "Manager",
-          "content": "This new device works really well, slaves don't know they're working for me since 15 years.\nIn case of emergency, don't forget that the only way out is killing the session while logged in to my account."
+          "ext": "txt",
+          "content": "This new device works really well.\nSlaves don't know they're working for me since 15 years.\nIn case of emergency, don't forget that the only way out is killing the session while\nlogged in to my account."
         },
         {
           "type": "File",
           "name": "beer",
           "perms": "Manager",
+          "ext": "txt",
           "content": "We managed to create a new type of beer that allows our slaves to work non-stop without needing to rest.\nWe called it BIG BANG"
         }
       ]

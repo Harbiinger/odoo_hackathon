@@ -16,9 +16,11 @@ public class Analyser {
         ArrayList<String> lexems = new ArrayList<>(Arrays.asList(input.split(" ")));
         String cmd = lexems.get(0);
         lexems.remove(0);
-        switch(cmd) {
+        switch (cmd) {
             case "ls":
                 return new Command(Commands.LS, lexems, issuer);
+            case "cd":
+                return new Command(Commands.CD, lexems, issuer);
             case "open":
                 return new Command(Commands.OPEN, lexems, issuer);
             case "browser":

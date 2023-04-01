@@ -90,6 +90,7 @@ public class MainSceneController extends Controller {
             case DISPLAY_MAIL_INFO -> displayMailInfo(resultAction.isAsRoot());
             case DISPLAY_MAIL_CONTENT -> displayMailContent(resultAction.getArgs(), resultAction.isAsRoot());
             case DISPLAY_CURRENT_USER -> whoami();
+            case CHANGE_DIRECTORY -> cd(resultAction.getArgs().get(0));
             // TODO : password
             case CHANGE_USER -> su(resultAction.getArgs().get(0));
             case ERROR_TOO_MANY_ARGS -> tooManyArguments(initialInputCommand);
@@ -123,11 +124,28 @@ public class MainSceneController extends Controller {
         }
     }
 
+    private void cd(String dir) {
+        if (dir.equals("..")) {
+            Folder tmp = cwd.getParent();
+            if (tmp != null) {
+                cwd = tmp;
+                pushText("Switch to "+ cwd.getName() + " directory");
+            }
+        } else {
+            Folder tmp = cwd.getFolder(dir);
+            if (tmp != null) {
+                cwd = tmp;
+                pushText("Switch to "+ cwd.getName() + " directory");
+            }
+            else pushText("Error : folder '" + dir + "' not found");
+        }
+    }
+
     private void displayMailInfo(boolean runAsRoot) {
         // TODO : what about running mail as CEO ?
         pushText("Welcome " + Users.getUsername(user) + ". Mailbox content :");
         if (runAsRoot || user == Users.Manager) {
-            Folder tmp = cwd.getFolder("Staff only");
+            Folder tmp = cwd.getFolder("StaffOnly");
             if (tmp != null) cwd = tmp;
         }
         cwd = cwd.getFolder("mail");
@@ -142,7 +160,7 @@ public class MainSceneController extends Controller {
 
     private void displayMailContent(ArrayList<String> mailNumbers, boolean runAsRoot) {
         if (runAsRoot || user == Users.Manager) {
-            Folder tmp = cwd.getFolder("Staff only");
+            Folder tmp = cwd.getFolder("StaffOnly");
             if (tmp != null) cwd = tmp;
         }
         cwd = cwd.getFolder("mail");
