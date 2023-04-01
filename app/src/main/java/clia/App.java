@@ -3,12 +3,20 @@
  */
 package clia;
 
+import clia.fs.Folder;
+import clia.fs.TextFile;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        Folder folder = new Folder("main");
+        folder.add(new TextFile("Hello", "txt", "Hello World!"));
+        folder.add(new TextFile("Goodbye", "txt", "Goodbye World!"));
+        folder.add(new Folder("etc"));
+        System.out.println(folder.getName());
+        System.out.println(folder.getContent());
     }
 }
