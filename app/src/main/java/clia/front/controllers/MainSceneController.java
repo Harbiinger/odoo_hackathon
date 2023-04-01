@@ -103,14 +103,14 @@ public class MainSceneController extends Controller {
             }
             case DISPLAY_DIRECTORY -> {
                 // TODO : get all directories of the cwd and all files from the cwd
-                for (String line : cwd.getContent().split("\n")) {
+                for (String line : cwd.getContent(user).split("\n")) {
                     pushText(line);
                 }
             }
             case DISPLAY_MAIL_INFO -> {
                 pushText("Welcome user. Mailbox content :");
                 cwd = cwd.getFolder("mail");
-                for (String line : cwd.getContent().split("\n")) {
+                for (String line : cwd.getContent(user).split("\n")) {
                     pushText(line.substring(0, line.length() - 4));
                 }
                 pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail number 1.");
@@ -120,7 +120,7 @@ public class MainSceneController extends Controller {
                 cwd = cwd.getFolder("mail");
                 for (String mailNumber : resultAction.getArgs()) {
                     pushText("Mail " + mailNumber + " :");
-                    for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent().split("\n")) {
+                    for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(user).split("\n")) {
                         pushText(line);
                     }
                 }
