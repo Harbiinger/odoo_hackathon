@@ -122,7 +122,6 @@ public class MainSceneController extends Controller {
                     for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent().split("\n")) {
                         pushText(line);
                     }
-                    pushText("");
                 }
                 cwd = cwd.getParent();
             }
