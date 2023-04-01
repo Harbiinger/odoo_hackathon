@@ -1,5 +1,6 @@
 package clia.cmd;
 
+import clia.back.fs.Users;
 import clia.front.actions.Action;
 import clia.front.actions.Actions;
 import org.json.simple.parser.ParseException;
@@ -21,6 +22,9 @@ public class CommandHandler {
 
             case OPEN -> {}
             case SU -> {
+                if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS);
+                if (command.getArgs().size() > 1) return new Action(Actions.ERROR_TOO_MANY_ARGS);
+                if (Users.getUser(command.getArgs().get(0)) == null) return new Action(Actions.INVALID_USERNAME, command.getArgs());
                 return new Action(Actions.CHANGE_USER, command.getArgs());
             }
             case WHOAMI -> {

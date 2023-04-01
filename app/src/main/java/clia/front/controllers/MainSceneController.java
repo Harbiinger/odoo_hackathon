@@ -3,6 +3,7 @@ package clia.front.controllers;
 import clia.back.fs.File;
 import clia.back.fs.Folder;
 import clia.back.fs.Initialiser;
+import clia.back.fs.Users;
 import clia.cmd.Analyser;
 import clia.cmd.Command;
 import clia.cmd.CommandHandler;
@@ -32,14 +33,14 @@ public class MainSceneController extends Controller {
      * List of all commands. Coincides with the lines list.
      */
     ArrayList<Command> commands = new ArrayList<>();
-    String username = "user";
+    Users user = Users.Employee;
     Initialiser initialiser = new Initialiser(Paths.get(System.getProperty("user.dir")) + "/build/resources/main/gameData/data.json");
     Folder cwd;
 
     @FXML
     TextField inputTextField;
     @FXML
-    Label historyLabel;
+    Label historyLabel, prefixLabel;
 
     @FXML
     void initialize() throws IOException, ParseException {
@@ -65,7 +66,7 @@ public class MainSceneController extends Controller {
 
             if (input.equals("")) lines.add(" ");
             else {
-                lines.add("[" + username + "@edoo ~]$ " + input);
+                lines.add("[" + Users.getUsername(user) + "@edoo ~]$ " + input);
                 // Send the input to the analyser and retrieve the resulting command
                 Command command = Analyser.analyse(input);
                 // Send the command to the handler and retrieve the potential actions that must be taken in the GUI
@@ -125,9 +126,14 @@ public class MainSceneController extends Controller {
                 }
                 cwd = cwd.getParent();
             }
-            case DISPLAY_CURRENT_USER -> pushText(username);
+            case DISPLAY_CURRENT_USER -> pushText(Users.getUsername(user));
             case CHANGE_USER -> {
+                user = Users.getUser(resultAction.getArgs().get(0));
+                pushText("Current user changed to '" + Users.getUsername(user) + "'");
+                prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
             }
+            case ERROR_TOO_MANY_ARGS -> pushText("Error : too many arguments for command '" + initialInputCommand + "'");
+            case INVALID_USERNAME -> pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
         }
     }
 
