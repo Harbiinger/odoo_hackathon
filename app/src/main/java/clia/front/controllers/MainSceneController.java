@@ -82,88 +82,125 @@ public class MainSceneController extends Controller {
 
     private void handleResultAction(Action resultAction, String initialInputCommand) {
         switch (resultAction.getAction()) {
-            case CLEAR -> {
-                for (int i = 0; i < MAX_LINES; i++) {
-                    pushText("");
-                }
+            case CLEAR -> clear();
+            case ERROR_NOT_ENOUGH_ARGS -> notEnoughArgs(initialInputCommand);
+            case ERROR_COMMAND_NOT_FOUND -> commandNotFound(initialInputCommand);
+            case DISPLAY_CONTENT_OF_FILE -> cat(resultAction.getArgs());
+            case DISPLAY_DIRECTORY -> ls(cwd.getContent(user));
+            case DISPLAY_MAIL_INFO -> displayMailInfo();
+            case DISPLAY_MAIL_CONTENT -> displayMailContent(resultAction.getArgs());
+            case DISPLAY_CURRENT_USER -> whoami();
+            case CHANGE_USER -> su(resultAction.getArgs().get(0));
+            case ERROR_TOO_MANY_ARGS -> tooManyArguments(initialInputCommand);
+            case INVALID_USERNAME -> invalidUsername(resultAction);
+            case INVALID_MAIL_ID -> invalidMailID(resultAction.getArgs());
+            case INVALID_FLAG -> invalidFlag(resultAction.getArgs().get(0), initialInputCommand);
+            case LIST_CRONS -> listCrons();
+            case REBOOT -> reboot();
+        }
+    }
+
+    private void reboot() {
+        pushText("Reboot is already scheduled by the system and should not be triggered manually.");
+    }
+
+    private void listCrons() {
+        pushText("# Reboot slaves' brains daily");
+        pushText("* * /1 * * rebot");
+        pushText("");
+        pushText("Error line 2 : 'rebot' command not found.");
+        pushText("");
+        pushText("READ-ONLY filesystem in DEBUG mode.");
+        pushText("In DEBUG mode, you can sudo without password.");
+    }
+
+    private void invalidFlag(String arg, String initialInputCommand) {
+        pushText("Error : invalid flag '" + arg + "' for command '" + initialInputCommand + "'");
+    }
+
+    private void invalidMailID(ArrayList<String> IDs) {
+        StringBuilder mails = new StringBuilder();
+        for (String s : IDs) mails.append(" ").append(s);
+        pushText("Error : invalid mail ID in '" + mails + "'");
+    }
+
+    private void invalidUsername(Action resultAction) {
+        pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
+    }
+
+    private void tooManyArguments(String initialInputCommand) {
+        pushText("Error : too many arguments for command '" + initialInputCommand + "'");
+    }
+
+    private void su(String username) {
+        user = Users.getUser(username);
+        pushText("Current user changed to '" + Users.getUsername(user) + "'");
+        prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+    }
+
+    private void whoami() {
+        pushText(Users.getUsername(user));
+    }
+
+    private void displayMailContent(ArrayList<String> mailNumbers) {
+        cwd = cwd.getFolder("mail");
+        for (String mailNumber : mailNumbers) {
+            pushText("Mail " + mailNumber + " :");
+            for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(user).split("\n")) {
+                pushText(line);
             }
-            case ERROR_NOT_ENOUGH_ARGS -> pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
-            case ERROR_COMMAND_NOT_FOUND -> {
-                pushText("Error : command '" + initialInputCommand + "' not found");
+        }
+        cwd = cwd.getParent();
+    }
+
+    private void displayMailInfo() {
+        pushText("Welcome user. Mailbox content :");
+        cwd = cwd.getFolder("mail");
+        for (String line : cwd.getContent(user).split("\n")) {
+            pushText(line.substring(0, line.length() - 4));
+        }
+        pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail number 1.");
+        cwd = cwd.getParent();
+    }
+
+    private void ls(String content) {
+        for (String line : content.split("\n")) {
+            pushText(line);
+        }
+    }
+
+    private void cat(ArrayList<String> filenames) {
+        ArrayList<File> files = new ArrayList<>();
+        for (String filename : filenames) {
+            File fileFound = cwd.getFile(filename);
+            if (fileFound == null) {
+                pushText("File '" + filename + "' not found");
+                return;
             }
-            case DISPLAY_CONTENT_OF_FILE -> {
-                ArrayList<File> files = new ArrayList<>();
-                for (String filename : resultAction.getArgs()) {
-                    File fileFound = cwd.getFile(filename);
-                    if (fileFound == null) {
-                        pushText("File '" + filename + "' not found");
-                        return;
-                    }
-                    files.add(fileFound);
-                }
-                for (File file : files) {
-                    String[] lines = file.getContent(user).split("\n");
-                    pushText(file.getName() + " : ");
-                    if (lines.length == 1 && lines[0].equals("")) {
-                        pushText("Insufficient permission");
-                    } else {
-                        for (String line : file.getContent(user).split("\n")) {
-                            pushText(line);
-                        }
-                    }
-                }
+            files.add(fileFound);
+        }
+        for (File file : files) {
+            String[] lines = file.getContent(user).split("\n");
+            pushText(file.getName() + " : ");
+            if (lines.length == 1 && lines[0].equals("")) {
+                pushText("Insufficient permission");
+            } else {
+                ls(file.getContent(user));
             }
-            case DISPLAY_DIRECTORY -> {
-                // TODO : get all directories of the cwd and all files from the cwd
-                for (String line : cwd.getContent(user).split("\n")) {
-                    pushText(line);
-                }
-            }
-            case DISPLAY_MAIL_INFO -> {
-                pushText("Welcome user. Mailbox content :");
-                cwd = cwd.getFolder("mail");
-                for (String line : cwd.getContent(user).split("\n")) {
-                    pushText(line.substring(0, line.length() - 4));
-                }
-                pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail number 1.");
-                cwd = cwd.getParent();
-            }
-            case DISPLAY_MAIL_CONTENT -> {
-                cwd = cwd.getFolder("mail");
-                for (String mailNumber : resultAction.getArgs()) {
-                    pushText("Mail " + mailNumber + " :");
-                    for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(user).split("\n")) {
-                        pushText(line);
-                    }
-                }
-                cwd = cwd.getParent();
-            }
-            case DISPLAY_CURRENT_USER -> pushText(Users.getUsername(user));
-            case CHANGE_USER -> {
-                user = Users.getUser(resultAction.getArgs().get(0));
-                pushText("Current user changed to '" + Users.getUsername(user) + "'");
-                prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
-            }
-            case ERROR_TOO_MANY_ARGS -> pushText("Error : too many arguments for command '" + initialInputCommand + "'");
-            case INVALID_USERNAME -> pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
-            case INVALID_MAIL_ID -> {
-                StringBuilder mails = new StringBuilder();
-                for (String s : resultAction.getArgs()) mails.append(" ").append(s);
-                pushText("Error : invalid email ID in'" + mails + "'");
-            }
-            case INVALID_FLAG -> pushText("Error : invalid flag '" + resultAction.getArgs().get(0) + "' for command '" + initialInputCommand + "'");
-            case LIST_CRONS -> {
-                pushText("# Reboot slaves' brains daily");
-                pushText("* * /1 * * rebot");
-                pushText("");
-                pushText("Error line 2 : 'rebot' command not found.");
-                pushText("");
-                pushText("READ-ONLY filesystem in DEBUG mode.");
-                pushText("In DEBUG mode, you can sudo without password.");
-            }
-            case REBOOT -> {
-                pushText("Reboot is already scheduled by the system and should not be triggered manually.");
-            }
+        }
+    }
+
+    private void commandNotFound(String initialInputCommand) {
+        pushText("Error : command '" + initialInputCommand + "' not found");
+    }
+
+    private void notEnoughArgs(String initialInputCommand) {
+        pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
+    }
+
+    private void clear() {
+        for (int i = 0; i < MAX_LINES; i++) {
+            pushText("");
         }
     }
 
