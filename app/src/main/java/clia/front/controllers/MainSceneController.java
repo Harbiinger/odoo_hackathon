@@ -98,6 +98,7 @@ public class MainSceneController extends Controller {
             case INVALID_FLAG -> invalidFlag(resultAction.getArgs().get(0), initialInputCommand);
             case LIST_CRONS -> listCrons();
             case REBOOT -> reboot();
+            case INSUFFICIENT_PERMISSION -> insufficientPermission();
         }
     }
 
@@ -168,7 +169,7 @@ public class MainSceneController extends Controller {
             String[] lines = file.getContent(runAsRoot ? Users.Manager : user).split("\n");
             pushText(file.getName() + " : ");
             if (lines.length == 1 && lines[0].equals("")) {
-                pushText("Insufficient permission");
+                insufficientPermission();
             } else {
                 ls(file.getContent(user));
             }
@@ -215,6 +216,10 @@ public class MainSceneController extends Controller {
 
     private void reboot() {
         pushText("Reboot is already scheduled by the system and should not be triggered manually.");
+    }
+
+    private void insufficientPermission() {
+        pushText("Insufficient permission");
     }
 
     private String formatLines() {

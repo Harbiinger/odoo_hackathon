@@ -37,7 +37,10 @@ public class CommandHandler {
                 if (command.getArgs().size() < 1) return new Action(Actions.DISPLAY_MAIL_INFO, command.isRoot());
                 for (String s : command.getArgs()) {
                     if (command.isRoot() && !(s.equals("3") || s.equals("4"))) return new Action(Actions.INVALID_MAIL_ID, command.getArgs());
-                    if (!command.isRoot() && !(s.equals("1") || s.equals("2"))) return new Action(Actions.INVALID_MAIL_ID, command.getArgs());
+                    if (!command.isRoot() && !(s.equals("1") || s.equals("2"))) {
+                        if (s.equals("3") || s.equals("4")) return new Action(Actions.INSUFFICIENT_PERMISSION);
+                        return new Action(Actions.INVALID_MAIL_ID, command.getArgs());
+                    }
                 }
                 return new Action(Actions.DISPLAY_MAIL_CONTENT, command.getArgs(), command.isRoot());
             }
