@@ -55,7 +55,7 @@ public class Folder extends FileSystem {
     public String getContent(Users user) {
         StringBuilder bobTheBuilder = new StringBuilder();
         for (FileSystem file : files) {
-            if (file.getPerms() == Users.Manager && (user == Users.Employee || user == Users.CEO)) {
+            if (file.getPerms() == Users.Manager && (user == Users.Manager || user == Users.CEO)) {
                 bobTheBuilder.append(file.getName()).append("\n");
             } else if (file.getPerms() == Users.CEO && user == Users.CEO) {
                 bobTheBuilder.append(file.getName()).append("\n");

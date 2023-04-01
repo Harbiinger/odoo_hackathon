@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Analyser {
+    public static Command analyse(String input, boolean isRoot) {
+        Command command = analyse(input);
+        command.setRoot(isRoot);
+        return command;
+    }
 
     public static Command analyse(String input) {
-        ArrayList<String> lexems = new ArrayList<String>(Arrays.asList(input.split(" ")));
+        ArrayList<String> lexems = new ArrayList<>(Arrays.asList(input.split(" ")));
         String cmd = lexems.get(0);
         lexems.remove(0);
         switch(cmd) {
@@ -32,6 +37,8 @@ public class Analyser {
                 return new Command(Commands.REBOOT);
             case "crontab":
                 return new Command(Commands.CRONTAB, lexems);
+            case "sudo":
+                return new Command(Commands.SUDO, lexems);
             default:
                 return new Command(Commands.NOT_FOUND);
         }

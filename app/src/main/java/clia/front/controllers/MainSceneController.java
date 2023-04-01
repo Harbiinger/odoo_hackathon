@@ -85,11 +85,12 @@ public class MainSceneController extends Controller {
             case CLEAR -> clear();
             case ERROR_NOT_ENOUGH_ARGS -> notEnoughArgs(initialInputCommand);
             case ERROR_COMMAND_NOT_FOUND -> commandNotFound(initialInputCommand);
-            case DISPLAY_CONTENT_OF_FILE -> cat(resultAction.getArgs());
-            case DISPLAY_DIRECTORY -> ls(cwd.getContent(user));
-            case DISPLAY_MAIL_INFO -> displayMailInfo();
-            case DISPLAY_MAIL_CONTENT -> displayMailContent(resultAction.getArgs());
+            case DISPLAY_CONTENT_OF_FILE -> cat(resultAction.getArgs(), resultAction.isAsRoot());
+            case DISPLAY_DIRECTORY -> ls(cwd.getContent(resultAction.isAsRoot() ? Users.Manager : user));
+            case DISPLAY_MAIL_INFO -> displayMailInfo(resultAction.isAsRoot());
+            case DISPLAY_MAIL_CONTENT -> displayMailContent(resultAction.getArgs(), resultAction.isAsRoot());
             case DISPLAY_CURRENT_USER -> whoami();
+            // TODO : password
             case CHANGE_USER -> su(resultAction.getArgs().get(0));
             case ERROR_TOO_MANY_ARGS -> tooManyArguments(initialInputCommand);
             case INVALID_USERNAME -> invalidUsername(resultAction);
@@ -100,8 +101,106 @@ public class MainSceneController extends Controller {
         }
     }
 
-    private void reboot() {
-        pushText("Reboot is already scheduled by the system and should not be triggered manually.");
+    private void clear() {
+        for (int i = 0; i < MAX_LINES; i++) {
+            pushText("");
+        }
+    }
+
+    private void notEnoughArgs(String initialInputCommand) {
+        pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
+    }
+
+    private void commandNotFound(String initialInputCommand) {
+        pushText("Error : command '" + initialInputCommand + "' not found");
+    }
+
+    private void ls(String content) {
+        for (String line : content.split("\n")) {
+            pushText(line);
+        }
+    }
+
+    private void displayMailInfo(boolean runAsRoot) {
+        // TODO : what about running mail as CEO ?
+        pushText("Welcome " + Users.getUsername(user) + ". Mailbox content :");
+        if (runAsRoot) {
+            Folder tmp = cwd.getFolder("Staff only");
+            if (tmp != null) cwd = tmp;
+        }
+        cwd = cwd.getFolder("mail");
+        System.out.println(cwd.getContent(runAsRoot ? Users.Manager : user));
+        for (String line : cwd.getContent(runAsRoot ? Users.Manager : user).split("\n")) {
+            pushText(line.substring(0, line.length() - 4));
+        }
+        pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail1.");
+        cwd = cwd.getParent();
+        if (runAsRoot) cwd = cwd.getParent();
+    }
+
+    private void displayMailContent(ArrayList<String> mailNumbers, boolean runAsRoot) {
+        if (runAsRoot) {
+            Folder tmp = cwd.getFolder("Staff only");
+            if (tmp != null) cwd = tmp;
+        }
+        cwd = cwd.getFolder("mail");
+        for (String mailNumber : mailNumbers) {
+            pushText("Mail " + mailNumber + " :");
+            for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(runAsRoot ? Users.Manager : user).split("\n")) {
+                pushText(line);
+            }
+        }
+        cwd = cwd.getParent();
+        if (runAsRoot) cwd = cwd.getParent();
+    }
+
+    private void cat(ArrayList<String> filenames, boolean runAsRoot) {
+        ArrayList<File> files = new ArrayList<>();
+        for (String filename : filenames) {
+            File fileFound = cwd.getFile(filename);
+            if (fileFound == null) {
+                pushText("File '" + filename + "' not found");
+                return;
+            }
+            files.add(fileFound);
+        }
+        for (File file : files) {
+            String[] lines = file.getContent(runAsRoot ? Users.Manager : user).split("\n");
+            pushText(file.getName() + " : ");
+            if (lines.length == 1 && lines[0].equals("")) {
+                pushText("Insufficient permission");
+            } else {
+                ls(file.getContent(user));
+            }
+        }
+    }
+
+    private void whoami() {
+        pushText(Users.getUsername(user));
+    }
+
+    private void su(String username) {
+        user = Users.getUser(username);
+        pushText("Current user changed to '" + Users.getUsername(user) + "'");
+        prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+    }
+
+    private void tooManyArguments(String initialInputCommand) {
+        pushText("Error : too many arguments for command '" + initialInputCommand + "'");
+    }
+
+    private void invalidUsername(Action resultAction) {
+        pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
+    }
+
+    private void invalidMailID(ArrayList<String> IDs) {
+        StringBuilder mails = new StringBuilder();
+        for (String s : IDs) mails.append(s);
+        pushText("Error : invalid mail ID in '" + mails + "'");
+    }
+
+    private void invalidFlag(String arg, String initialInputCommand) {
+        pushText("Error : invalid flag '" + arg + "' for command '" + initialInputCommand + "'");
     }
 
     private void listCrons() {
@@ -114,94 +213,8 @@ public class MainSceneController extends Controller {
         pushText("In DEBUG mode, you can sudo without password.");
     }
 
-    private void invalidFlag(String arg, String initialInputCommand) {
-        pushText("Error : invalid flag '" + arg + "' for command '" + initialInputCommand + "'");
-    }
-
-    private void invalidMailID(ArrayList<String> IDs) {
-        StringBuilder mails = new StringBuilder();
-        for (String s : IDs) mails.append(" ").append(s);
-        pushText("Error : invalid mail ID in '" + mails + "'");
-    }
-
-    private void invalidUsername(Action resultAction) {
-        pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
-    }
-
-    private void tooManyArguments(String initialInputCommand) {
-        pushText("Error : too many arguments for command '" + initialInputCommand + "'");
-    }
-
-    private void su(String username) {
-        user = Users.getUser(username);
-        pushText("Current user changed to '" + Users.getUsername(user) + "'");
-        prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
-    }
-
-    private void whoami() {
-        pushText(Users.getUsername(user));
-    }
-
-    private void displayMailContent(ArrayList<String> mailNumbers) {
-        cwd = cwd.getFolder("mail");
-        for (String mailNumber : mailNumbers) {
-            pushText("Mail " + mailNumber + " :");
-            for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(user).split("\n")) {
-                pushText(line);
-            }
-        }
-        cwd = cwd.getParent();
-    }
-
-    private void displayMailInfo() {
-        pushText("Welcome user. Mailbox content :");
-        cwd = cwd.getFolder("mail");
-        for (String line : cwd.getContent(user).split("\n")) {
-            pushText(line.substring(0, line.length() - 4));
-        }
-        pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail number 1.");
-        cwd = cwd.getParent();
-    }
-
-    private void ls(String content) {
-        for (String line : content.split("\n")) {
-            pushText(line);
-        }
-    }
-
-    private void cat(ArrayList<String> filenames) {
-        ArrayList<File> files = new ArrayList<>();
-        for (String filename : filenames) {
-            File fileFound = cwd.getFile(filename);
-            if (fileFound == null) {
-                pushText("File '" + filename + "' not found");
-                return;
-            }
-            files.add(fileFound);
-        }
-        for (File file : files) {
-            String[] lines = file.getContent(user).split("\n");
-            pushText(file.getName() + " : ");
-            if (lines.length == 1 && lines[0].equals("")) {
-                pushText("Insufficient permission");
-            } else {
-                ls(file.getContent(user));
-            }
-        }
-    }
-
-    private void commandNotFound(String initialInputCommand) {
-        pushText("Error : command '" + initialInputCommand + "' not found");
-    }
-
-    private void notEnoughArgs(String initialInputCommand) {
-        pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
-    }
-
-    private void clear() {
-        for (int i = 0; i < MAX_LINES; i++) {
-            pushText("");
-        }
+    private void reboot() {
+        pushText("Reboot is already scheduled by the system and should not be triggered manually.");
     }
 
     private String formatLines() {
