@@ -16,15 +16,17 @@ public class App extends Application {
     public void start(Stage stage_) {
         stage = stage_;
 
-        Scenes.MainScene = SceneLoader.load("MainScene");
+        //Scenes.MainScene = SceneLoader.load("MainScene");
+        Scenes.BrowserFrontPage = SceneLoader.load("BrowserSearchPage");
 
-        Flow.add(Scenes.MainScene);
+        //Flow.add(Scenes.MainScene);
 
         stage.setTitle("CLIA");
         // stage.setResizable(false);
         stage.setWidth(1280);
         stage.setHeight(720);
-        stage.setScene(Scenes.MainScene);
+        //stage.setScene(Scenes.MainScene);
+        stage.setScene(Scenes.BrowserSearchPage);
         stage.show();
     }
 }
