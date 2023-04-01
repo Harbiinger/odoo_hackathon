@@ -69,19 +69,4 @@ public class Initialiser {
         f.addAll(readFolder(json, f));
         return f;
     }
-
-    public static void main(String[] args) throws IOException, ParseException {
-        Path path = Paths.get(System.getProperty("user.dir"));
-        String stringPath = path.toString();
-        stringPath = stringPath + "/app/src/main/resources/gameData/data.json";
-        Initialiser init = new Initialiser(stringPath);
-        Folder fs = init.Init();
-        System.out.println(fs.getContent());
-
-        Folder tmp = fs.getFolder("Documents");
-        System.out.println(tmp.getContent());
-
-        System.out.println(tmp.getFile("file1.txt").getContent());
-        System.out.println(tmp.getFile("file1.txt").getPath());
-    }
 }

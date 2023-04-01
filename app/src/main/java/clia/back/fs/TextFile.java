@@ -9,8 +9,17 @@ public class TextFile extends File {
         this.content = content;
     }
 
-    public String getContent() {
-        return content;
+    public String getContent(Users user) {
+        if (getPerms() == Users.CEO && user == Users.CEO) {
+            return content;
+        }
+        if (getPerms() == Users.Manager && (user == Users.Manager || user == Users.CEO)) {
+            return content;
+        }
+        if (getPerms() == Users.Employee) {
+            return content;
+        }
+        return "";
     }
 
     public void setContent(String content) {

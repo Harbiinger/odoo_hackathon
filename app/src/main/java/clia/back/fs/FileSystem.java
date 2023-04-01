@@ -15,7 +15,11 @@ public abstract class FileSystem {
 
     public abstract String getName();
 
-    public abstract String getContent();
+    public Users getPerms() {
+        return perms;
+    }
+
+    public abstract String getContent(Users user);
 
     public String getPath() {
         if (parent == null) {
