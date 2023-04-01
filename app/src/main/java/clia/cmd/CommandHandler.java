@@ -18,9 +18,14 @@ public class CommandHandler {
             case LS -> {
                 return new Action(Actions.DISPLAY_DIRECTORY);
             }
+
             case OPEN -> {}
-            case LOGOUT -> {}
-            case LOGIN -> {}
+            case SU -> {
+                return new Action(Actions.CHANGE_USER, command.getArgs());
+            }
+            case WHOAMI -> {
+                return new Action(Actions.DISPLAY_CURRENT_USER);
+            }
             case CAT -> {
                 if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS);
                 // TODO : replace null by arraylist of new File(args[i])

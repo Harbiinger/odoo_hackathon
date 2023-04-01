@@ -20,10 +20,10 @@ public class Analyser {
                 return new Command(Commands.CAT, lexems);
             case "mail":
                 return new Command(Commands.MAIL, lexems);
-            case "logout":
-                return new Command(Commands.LOGOUT);
-            case "login":
-                return new Command(Commands.LOGIN, lexems);
+            case "su":
+                return new Command(Commands.SU, lexems);
+            case "whoami":
+                return new Command(Commands.WHOAMI);
             case "clear":
                 return new Command(Commands.CLEAR);
             case "shutdown":

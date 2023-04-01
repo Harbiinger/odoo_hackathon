@@ -65,7 +65,7 @@ public class MainSceneController extends Controller {
 
             if (input.equals("")) lines.add(" ");
             else {
-                lines.add("[user@edoo ~]$ " + input);
+                lines.add("[" + username + "@edoo ~]$ " + input);
                 // Send the input to the analyser and retrieve the resulting command
                 Command command = Analyser.analyse(input);
                 // Send the command to the handler and retrieve the potential actions that must be taken in the GUI
@@ -124,6 +124,9 @@ public class MainSceneController extends Controller {
                     }
                 }
                 cwd = cwd.getParent();
+            }
+            case DISPLAY_CURRENT_USER -> pushText(username);
+            case CHANGE_USER -> {
             }
         }
     }
