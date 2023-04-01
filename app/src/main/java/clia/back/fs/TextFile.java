@@ -4,8 +4,8 @@ public class TextFile extends File {
 
     private String content;
 
-    public TextFile(String name, Users perms,String extension, String content) {
-        super(name,extension, perms);
+    public TextFile(String name, Users perms, String extension, Folder parent ,String content) {
+        super(name,extension, perms, parent);
         this.content = content;
     }
 

@@ -26,7 +26,7 @@ public class Initialiser {
         this.path = path;
     }
 
-    public ArrayList<FileSystem> readFolder(JSONObject json) throws IOException, ParseException {
+    public ArrayList<FileSystem> readFolder(JSONObject json, Folder parent) throws IOException, ParseException {
 
         ArrayList<FileSystem> files = new ArrayList<>();
 
@@ -37,14 +37,17 @@ public class Initialiser {
         while (itr2.hasNext()) {
             JSONObject jo = (JSONObject) itr2.next();
             if (Objects.equals((String) jo.get("type"), "Folder")) {
-                files.add(new Folder((String) jo.get("name"),
+                Folder tmp = new Folder((String) jo.get("name"),
                         Users.getUser((String) jo.get("perms")),
-                        readFolder(jo)
-                ));
+                        parent
+                );
+                tmp.addAll(readFolder(jo, tmp));
+                files.add(tmp);
             } else {
                 files.add(new TextFile((String) jo.get("name"),
                         Users.getUser((String) jo.get("perms")),
                         (String) jo.get("ext"),
+                        parent,
                         (String) jo.get("content")
                 ));
             }
@@ -59,11 +62,12 @@ public class Initialiser {
 
         JSONObject json = (JSONObject) obj;
 
-        return new Folder((String) json.get("name"),
+        Folder f = new Folder((String) json.get("name"),
                 Users.getUser((String) json.get("perms")),
-                readFolder(json)
+                null
         );
-
+        f.addAll(readFolder(json, f));
+        return f;
     }
 
     public static void main(String[] args) throws IOException, ParseException {
@@ -73,5 +77,11 @@ public class Initialiser {
         Initialiser init = new Initialiser(stringPath);
         Folder fs = init.Init();
         System.out.println(fs.getContent());
+
+        Folder tmp = fs.getFolder("Documents");
+        System.out.println(tmp.getContent());
+
+        System.out.println(tmp.getFile("file1.txt").getContent());
+        System.out.println(tmp.getFile("file1.txt").getPath());
     }
 }
