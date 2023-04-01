@@ -44,7 +44,9 @@ public class CommandHandler {
                 return new Action(Actions.ERROR_COMMAND_NOT_FOUND);
             }
             case SHUTDOWN -> {}
-            case REBOOT -> {}
+            case REBOOT -> {
+                return new Action(Actions.REBOOT);
+            }
             case CLEAR -> {
                 return new Action(Actions.CLEAR);
             }

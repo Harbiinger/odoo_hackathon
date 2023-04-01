@@ -13,11 +13,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.shape.Line;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -90,7 +88,9 @@ public class MainSceneController extends Controller {
                 }
             }
             case ERROR_NOT_ENOUGH_ARGS -> pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
-            case ERROR_COMMAND_NOT_FOUND -> pushText("Error : command '" + initialInputCommand + "' not found");
+            case ERROR_COMMAND_NOT_FOUND -> {
+                pushText("Error : command '" + initialInputCommand + "' not found");
+            }
             case DISPLAY_CONTENT_OF_FILE -> {
                 ArrayList<File> files = new ArrayList<>();
                 for (String filename : resultAction.getArgs()) {
@@ -160,6 +160,9 @@ public class MainSceneController extends Controller {
                 pushText("");
                 pushText("READ-ONLY filesystem in DEBUG mode.");
                 pushText("In DEBUG mode, you can sudo without password.");
+            }
+            case REBOOT -> {
+                pushText("Reboot is already scheduled by the system and should not be triggered manually.");
             }
         }
     }
