@@ -52,10 +52,16 @@ public class Folder extends FileSystem {
         return super.name.equals(name);
     }
 
-    public String getContent() {
+    public String getContent(Users user) {
         StringBuilder bobTheBuilder = new StringBuilder();
         for (FileSystem file : files) {
-            bobTheBuilder.append(file.getName()).append("\n");
+            if (file.getPerms() == Users.Employee && (user == Users.Employee || user == Users.CEO)) {
+                bobTheBuilder.append(file.getName()).append("\n");
+            } else if (file.getPerms() == Users.CEO && user == Users.CEO) {
+                bobTheBuilder.append(file.getName()).append("\n");
+            } else if (file.getPerms() == Users.Employee) {
+                bobTheBuilder.append(file.getName()).append("\n");
+            }
         }
         return bobTheBuilder.toString();
     }
