@@ -1,51 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.2"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="clia.front.controllers.MainSceneController">
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clia.front.controllers.MainSceneController">
     <StackPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: rgb(0,0,0);">
-        <StackPane maxHeight="680.0" maxWidth="1242.0" minHeight="680.0" minWidth="1242.0" prefHeight="680.0"
-                   prefWidth="1242.0" style="-fx-border-color: rgb(255, 255, 255);">
-            <StackPane maxHeight="654.0" maxWidth="1223.0" minHeight="600.0" minWidth="1212.0" prefHeight="654.0"
-                       prefWidth="1223.0">
-                <TextField fx:id="inputTextField" maxHeight="32.0" maxWidth="1075.0" minHeight="32.0" minWidth="1075.0"
-                           onKeyReleased="#handleInputTextFieldOnKeyReleased" prefHeight="32.0" prefWidth="1075.0"
-                           promptText="_"
-                           style="-fx-padding: 4px; -fx-background-color: rgba(0, 0, 0, 0); -fx-color: #ffffff; -fx-border-style: solid; -fx-border-radius: 0px; -fx-border-color: rgba(255, 255, 255); -fx-border-width: 1; -fx-text-fill: rgb(255, 255, 255);"
-                           StackPane.alignment="BOTTOM_LEFT">
+        <StackPane maxHeight="680.0" maxWidth="1242.0" minHeight="680.0" minWidth="1242.0" prefHeight="680.0" prefWidth="1242.0" style="-fx-border-color: rgb(255, 255, 255);">
+            <StackPane maxHeight="654.0" maxWidth="1223.0" minHeight="600.0" minWidth="1212.0" prefHeight="654.0" prefWidth="1223.0">
+                <TextField fx:id="inputTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyReleased="#handleInputTextFieldOnKeyReleased" prefHeight="32.0" prefWidth="1075.0" promptText="_" style="-fx-padding: 4px; -fx-background-color: rgba(0, 0, 0, 0); -fx-color: #ffffff; -fx-border-style: solid; -fx-border-radius: 0px; -fx-border-color: rgba(255, 255, 255); -fx-border-width: 1; -fx-text-fill: rgb(255, 255, 255);" StackPane.alignment="BOTTOM_LEFT">
                     <StackPane.margin>
-                        <Insets left="119.0"/>
+                        <Insets left="119.0" />
                     </StackPane.margin>
                     <font>
-                        <Font name="Monospaced Regular" size="13.0"/>
+                        <Font name="Monospaced Regular" size="13.0" />
                     </font>
                 </TextField>
-                <Label fx:id="historyLabel" alignment="BOTTOM_LEFT" prefHeight="621.0" prefWidth="1175.0"
-                       style="-fx-label-padding: 5;" text="Welcome to TTWhy !" textFill="WHITE"
-                       StackPane.alignment="TOP_LEFT">
+                <Label fx:id="historyLabel" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="1175.0" style="-fx-label-padding: 5;" text="Welcome to TTWhy !" textFill="WHITE" StackPane.alignment="TOP_LEFT">
                     <font>
-                        <Font name="Monospaced Regular" size="13.0"/>
+                        <Font name="Monospaced Regular" size="13.0" />
                     </font>
                 </Label>
-                <Label prefHeight="33.0" prefWidth="195.0" style="-fx-label-padding: 5;" text="Welcome to TTWhy !"
-                       textFill="WHITE" visible="false" StackPane.alignment="TOP_CENTER">
+                <Label prefHeight="33.0" prefWidth="195.0" style="-fx-label-padding: 5;" text="Welcome to TTWhy !" textFill="WHITE" visible="false" StackPane.alignment="TOP_CENTER">
                     <StackPane.margin>
-                        <Insets top="5.0"/>
+                        <Insets top="5.0" />
                     </StackPane.margin>
                     <font>
-                        <Font name="Monospaced Regular" size="17.0"/>
+                        <Font name="Monospaced Regular" size="17.0" />
                     </font>
                 </Label>
-                <Label maxHeight="32.0" maxWidth="120.0" minHeight="32.0" minWidth="120.0" prefHeight="32.0"
-                       prefWidth="120.0"
-                       style="-fx-padding: 4px; -fx-background-color: rgba(0, 0, 0, 0); -fx-color: #ffffff; -fx-border-style: solid; -fx-border-radius: 0px; -fx-border-color: rgba(255, 255, 255); -fx-border-width: 1; -fx-text-fill: rgb(255, 255, 255);"
-                       text="[user@edoo ~]$" StackPane.alignment="BOTTOM_LEFT">
+                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="120.0" style="-fx-padding: 4px; -fx-background-color: rgba(0, 0, 0, 0); -fx-color: #ffffff; -fx-border-style: solid; -fx-border-radius: 0px; -fx-border-color: rgba(255, 255, 255); -fx-border-width: 1; -fx-text-fill: rgb(255, 255, 255);" text="[user@edoo ~]$" StackPane.alignment="BOTTOM_LEFT">
                     <font>
-                        <Font name="Monospaced Regular" size="13.0"/>
+                        <Font name="Monospaced Regular" size="13.0" />
                     </font>
                 </Label>
             </StackPane>

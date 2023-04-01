@@ -12,6 +12,10 @@ public class Command {
         this.args = args;
     }
 
+    public Command(Commands cmd) {
+        this.cmd = cmd;
+    }
+
     public Commands getCmd() {
         return cmd;
     }

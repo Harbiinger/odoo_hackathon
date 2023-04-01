@@ -15,23 +15,23 @@ public class Analyser {
             case "open":
                 return new Command(Commands.OPEN, lexems);
             case "browser":
-                return new Command(Commands.BROWSER, null);
+                return new Command(Commands.BROWSER);
             case "cat":
                 return new Command(Commands.CAT, lexems);
             case "mail":
                 return new Command(Commands.MAIL, lexems);
             case "logout":
-                return new Command(Commands.LOGOUT, null);
+                return new Command(Commands.LOGOUT);
             case "login":
                 return new Command(Commands.LOGIN, lexems);
             case "clear":
-                return new Command(Commands.CLEAR, null);
+                return new Command(Commands.CLEAR);
             case "shutdown":
-                return new Command(Commands.SHUTDOWN, null);
+                return new Command(Commands.SHUTDOWN);
             case "reboot":
-                return new Command(Commands.REBOOT, null);
+                return new Command(Commands.REBOOT);
             default:
-                return new Command(Commands.NOT_FOUND, null);
+                return new Command(Commands.NOT_FOUND);
         }
     }
 }
