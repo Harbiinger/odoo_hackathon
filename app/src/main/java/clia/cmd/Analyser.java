@@ -27,8 +27,15 @@ public class Analyser {
                 break;
             case "login":
                 return new Command(Commands.LOGIN, lexems.subList(1, lexems.size()-1));
+                break;
             case "clear":
                 return new Command(Commands.CLEAR, null);
+                break;
+            case "shutdown":
+                return new Command(Commands.SHUTDOWN, null);
+                break;
+            case "reboot":
+                return new Command(Commands.REBOOT, null);
                 break;
             default:
                 return new Command(Commands.NOT_FOUND, null);
