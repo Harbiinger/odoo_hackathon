@@ -5,41 +5,37 @@
   "content":[
     {
       "type":"Folder",
-      "name":"Documents",
+      "name":"Mail",
       "perms":"Employee",
       "content":[
         {
           "type":"File",
-          "name":"file1",
+          "name":"mail1",
           "ext":"txt",
           "perms":"Employee",
-          "content":"This is file 1"
+          "content":"Delivered-From: ceo@edoo.com
+Delivered-To: theo@edoo.com
+Subject: Your tasks for this session
+
+Can you please make the HTMl and CSS for our new Chinese accounting module ?
+"
         },
 
         {
           "type":"File",
-          "name":"file2",
+          "name":"mail2",
           "ext":"txt",
           "perms":"Employee",
-          "content":"This is file 2"
+          "content":"Delivered-From: server@edoo.com
+Delivered-To: theo@edoo.com
+Subject: Error in your crontab
+
+crontab error in line 1 : bash: rebot: command not found
+Your computer is falling back to a 2 minutes debug session
+You can look at your crontab with : crontab -e
+"
         }
       ]
-    },
-
-    {
-      "type": "File",
-        "name": "file3",
-        "ext": "txt",
-        "perms": "Employee",
-        "content": "This is file 3"
-    },
-
-    {
-      "type": "File",
-        "name": "file4",
-        "ext": "txt",
-        "perms": "Employee",
-        "content": "This is file 4"
     }
   ]
 }
