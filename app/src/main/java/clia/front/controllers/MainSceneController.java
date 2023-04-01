@@ -68,7 +68,7 @@ public class MainSceneController extends Controller {
             else {
                 lines.add("[" + Users.getUsername(user) + "@edoo ~]$ " + input);
                 // Send the input to the analyser and retrieve the resulting command
-                Command command = Analyser.analyse(input);
+                Command command = Analyser.analyse(input, user);
                 // Send the command to the handler and retrieve the potential actions that must be taken in the GUI
                 Action resultAction = CommandHandler.handle(command);
                 // Send the resulting action to the local handler

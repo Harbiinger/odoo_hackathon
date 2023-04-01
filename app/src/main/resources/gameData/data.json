@@ -67,7 +67,7 @@
               "name": "mail3",
               "ext": "txt",
               "perms": "Manager",
-              "content": "From: CEO\nContent: Edoo has now acquired the company 'Brain Fogger'.\nThey created a device capable of using people's brains has computing power. This technology will be a game changer for our company.\nIt will allow us to reduce our costs and greatly increase our profits.\nBut this technology must remove any free will from the human resource in order to properly work.\nThis information should NEVER be revealed to the public or it could means the end of our activities.\nThis is very risky but will be very profitable.\nI hope you are aware of our current situation and you will act with great caution."
+              "content": "From: CEO\nContent: Edoo has now acquired the company 'Brain Fogger'.\nThey created a device capable of using people's brains has computing power.\nThis technology will be a game changer for our company.\nIt will allow us to reduce our costs and greatly increase our profits.\nBut this technology must remove any free will from the human resource in order to properly work.\nThis information should NEVER be revealed to the public or it could means the end of our activities.\nThis is very risky but will be very profitable.\nI hope you are aware of our current situation and you will act with great caution."
             },
             {
               "type": "File",
