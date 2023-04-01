@@ -54,9 +54,4 @@ public class Clock {
         };
         timer.schedule(task, 0, 1000); // Every minute run the timer task
     }
-
-    public static void main(String[] args) {
-        Clock clock = new Clock(LocalDate.now(), LocalTime.now(), 10);
-        clock.start();
-    }
 }
