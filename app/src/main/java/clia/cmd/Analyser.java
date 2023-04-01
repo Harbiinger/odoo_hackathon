@@ -30,6 +30,8 @@ public class Analyser {
                 return new Command(Commands.SHUTDOWN);
             case "reboot":
                 return new Command(Commands.REBOOT);
+            case "crontab":
+                return new Command(Commands.CRONTAB, lexems);
             default:
                 return new Command(Commands.NOT_FOUND);
         }

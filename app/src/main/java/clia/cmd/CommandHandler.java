@@ -13,13 +13,11 @@ public class CommandHandler {
      * @param command The command to execute
      */
     public static Action handle(Command command) throws IOException, ParseException {
-
         switch (command.getCmd()) {
             case BROWSER -> {}
             case LS -> {
                 return new Action(Actions.DISPLAY_DIRECTORY);
             }
-
             case OPEN -> {}
             case SU -> {
                 if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS);
@@ -32,20 +30,15 @@ public class CommandHandler {
             }
             case CAT -> {
                 if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS);
-                // TODO : replace null by arraylist of new File(args[i])
-                /*
-                 ArrayList<File> files = new ArrayList<>();
-                 for (String name : command.getArgs()) {
-                     GET FILES FROM THEIR NAME (files.append())
-                 }
-                 */
-                return new Action(Actions.DISPLAY_CONTENT_OF_FILE);
+                return new Action(Actions.DISPLAY_CONTENT_OF_FILE, command.getArgs());
             }
             case MAIL -> {
-                if (command.getArgs().size() == 0) {
-                    return new Action(Actions.DISPLAY_MAIL_INFO);
+                if (command.getArgs().size() == 0) return new Action(Actions.DISPLAY_MAIL_INFO);
+                for (String s : command.getArgs()) {
+                    if (s.equals("1") || s.equals("2")) return new Action(Actions.DISPLAY_MAIL_CONTENT, command.getArgs());
+                    else return new Action(Actions.INVALID_MAIL_ID, command.getArgs());
                 }
-                return new Action(Actions.DISPLAY_MAIL_CONTENT, command.getArgs());
+
             }
             case NOT_FOUND -> {
                 return new Action(Actions.ERROR_COMMAND_NOT_FOUND);
@@ -54,6 +47,13 @@ public class CommandHandler {
             case REBOOT -> {}
             case CLEAR -> {
                 return new Action(Actions.CLEAR);
+            }
+            case CRONTAB -> {
+                if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS);
+                if (command.getArgs().size() > 1) return new Action(Actions.ERROR_TOO_MANY_ARGS);
+                if (!command.getArgs().get(0).equals("-l")) return new Action(Actions.INVALID_FLAG, command.getArgs());
+                return new Action(Actions.LIST_CRONS);
+                // TODO : if -l : cat, else invlid param
             }
         }
         return new Action(Actions.NONE);

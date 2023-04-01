@@ -13,9 +13,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Line;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ import java.util.ArrayList;
  */
 public class MainSceneController extends Controller {
     int lineCount = 1;
-    final int MAX_LINES = 34;
+    final int MAX_LINES = 19;
     /**
      * List of all inputs. Coincides with the commands list.
      */
@@ -90,16 +92,26 @@ public class MainSceneController extends Controller {
             case ERROR_NOT_ENOUGH_ARGS -> pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
             case ERROR_COMMAND_NOT_FOUND -> pushText("Error : command '" + initialInputCommand + "' not found");
             case DISPLAY_CONTENT_OF_FILE -> {
-                // TODO : make this work with cyril's code
-                /*
-                for (File file : (ArrayList<File>) resultAction.getArgs()) {
-                    for (String line : file.getContent().split("\n")) {
-                        pushText(line);
+                ArrayList<File> files = new ArrayList<>();
+                for (String filename : resultAction.getArgs()) {
+                    File fileFound = cwd.getFile(filename);
+                    if (fileFound == null) {
+                        pushText("File '" + filename + "' not found");
+                        return;
                     }
-                    pushText("");
-                    pushText("");
+                    files.add(fileFound);
                 }
-                 */
+                for (File file : files) {
+                    String[] lines = file.getContent(user).split("\n");
+                    pushText(file.getName() + " : ");
+                    if (lines.length == 1 && lines[0].equals("")) {
+                        pushText("Insufficient permission");
+                    } else {
+                        for (String line : file.getContent(user).split("\n")) {
+                            pushText(line);
+                        }
+                    }
+                }
             }
             case DISPLAY_DIRECTORY -> {
                 // TODO : get all directories of the cwd and all files from the cwd
@@ -134,6 +146,21 @@ public class MainSceneController extends Controller {
             }
             case ERROR_TOO_MANY_ARGS -> pushText("Error : too many arguments for command '" + initialInputCommand + "'");
             case INVALID_USERNAME -> pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
+            case INVALID_MAIL_ID -> {
+                StringBuilder mails = new StringBuilder();
+                for (String s : resultAction.getArgs()) mails.append(" ").append(s);
+                pushText("Error : invalid email ID in'" + mails + "'");
+            }
+            case INVALID_FLAG -> pushText("Error : invalid flag '" + resultAction.getArgs().get(0) + "' for command '" + initialInputCommand + "'");
+            case LIST_CRONS -> {
+                pushText("# Reboot slaves' brains daily");
+                pushText("* * /1 * * rebot");
+                pushText("");
+                pushText("Error line 2 : 'rebot' command not found.");
+                pushText("");
+                pushText("READ-ONLY filesystem in DEBUG mode.");
+                pushText("In DEBUG mode, you can sudo without password.");
+            }
         }
     }
 
