@@ -3,8 +3,8 @@ package clia.back.fs;
 public abstract class File extends FileSystem {
     private String extension;
 
-    public File(String name, String extension) {
-        super(name);
+    public File(String name, String extension, Users perms) {
+        super(name, perms);
         this.extension = extension;
     }
 

@@ -1,0 +1,45 @@
+{
+  "type":"Folder",
+  "name":"home",
+  "perms":"Employee",
+  "content":[
+    {
+      "type":"Folder",
+      "name":"Documents",
+      "perms":"Employee",
+      "content":[
+        {
+          "type":"File",
+          "name":"file1",
+          "ext":"txt",
+          "perms":"Employee",
+          "content":"This is file 1"
+        },
+
+        {
+          "type":"File",
+          "name":"file2",
+          "ext":"txt",
+          "perms":"Employee",
+          "content":"This is file 2"
+        }
+      ]
+    },
+
+    {
+      "type": "File",
+        "name": "file3",
+        "ext": "txt",
+        "perms": "Employee",
+        "content": "This is file 3"
+    },
+
+    {
+      "type": "File",
+        "name": "file4",
+        "ext": "txt",
+        "perms": "Employee",
+        "content": "This is file 4"
+    }
+  ]
+}
