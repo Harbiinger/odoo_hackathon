@@ -124,7 +124,7 @@ public class MainSceneController extends Controller {
     private void displayMailInfo(boolean runAsRoot) {
         // TODO : what about running mail as CEO ?
         pushText("Welcome " + Users.getUsername(user) + ". Mailbox content :");
-        if (runAsRoot) {
+        if (runAsRoot || user == Users.Manager) {
             Folder tmp = cwd.getFolder("Staff only");
             if (tmp != null) cwd = tmp;
         }
@@ -139,7 +139,7 @@ public class MainSceneController extends Controller {
     }
 
     private void displayMailContent(ArrayList<String> mailNumbers, boolean runAsRoot) {
-        if (runAsRoot) {
+        if (runAsRoot || user == Users.Manager) {
             Folder tmp = cwd.getFolder("Staff only");
             if (tmp != null) cwd = tmp;
         }
