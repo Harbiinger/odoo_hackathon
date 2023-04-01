@@ -17,7 +17,7 @@ public class App extends Application {
         stage = stage_;
 
         //Scenes.MainScene = SceneLoader.load("MainScene");
-        Scenes.BrowserFrontPage = SceneLoader.load("BrowserSearchPage");
+        Scenes.BrowserSearchPage = SceneLoader.load("BrowserSearchPage");
 
         //Flow.add(Scenes.MainScene);
 
