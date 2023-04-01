@@ -1,5 +1,4 @@
 package clia;
-
 import clia.front.navigation.Flow;
 import clia.front.scenes.SceneLoader;
 import clia.front.scenes.Scenes;
