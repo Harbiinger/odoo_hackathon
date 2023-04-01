@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Action {
     private Actions action;
-    private ArrayList<Object> args;
+    private ArrayList<String> args;
 
-    public Action(Actions action, ArrayList<Object> args) {
+    public Action(Actions action, ArrayList<String> args) {
         this.action = action;
         this.args = args;
     }
@@ -19,7 +19,7 @@ public class Action {
         return action;
     }
 
-    public ArrayList<Object> getArgs() {
+    public ArrayList<String> getArgs() {
         return args;
     }
 }

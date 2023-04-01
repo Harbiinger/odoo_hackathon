@@ -1,16 +1,21 @@
 package clia.front.controllers;
 
+import clia.back.fs.File;
+import clia.back.fs.Folder;
+import clia.back.fs.Initialiser;
 import clia.cmd.Analyser;
 import clia.cmd.Command;
 import clia.cmd.CommandHandler;
 import clia.front.actions.Action;
-import clia.front.actions.Actions;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +33,8 @@ public class MainSceneController extends Controller {
      */
     ArrayList<Command> commands = new ArrayList<>();
     String username = "user";
+    Initialiser initialiser = new Initialiser(Paths.get(System.getProperty("user.dir")) + "/build/resources/main/gameData/data.json");
+    Folder cwd;
 
     @FXML
     TextField inputTextField;
@@ -35,7 +42,8 @@ public class MainSceneController extends Controller {
     Label historyLabel;
 
     @FXML
-    void initialize() {
+    void initialize() throws IOException, ParseException {
+        cwd = initialiser.Init();
         // TODO : this can be used as "clear" command code to execute in the handler if command == clear
         pushText("Welcome to TTWhy !");
         // TODO : make date = now - 20 min
@@ -46,7 +54,7 @@ public class MainSceneController extends Controller {
     }
 
     @FXML
-    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) {
+    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) throws IOException, ParseException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             if (lineCount == MAX_LINES) {
@@ -94,39 +102,30 @@ public class MainSceneController extends Controller {
             }
             case DISPLAY_DIRECTORY -> {
                 // TODO : get all directories of the cwd and all files from the cwd
-                /*
-                StringBuilder bobTheBuilder = new StringBuilder();
-                for (Directory dir : cwd.getDirectories()) {
-                    bobTheBuilder.append(dir).append("\n");
+                for (String line : cwd.getContent().split("\n")) {
+                    pushText(line);
                 }
-                ArrayList<File> files = cwd.getFiles();
-                for (int i = 0; i < files.size(); i++) {
-                    bobTheBuilder.append(files.get(i));
-                    if (i != files.size() - 1) bobTheBuilder.append("\n");
-                }
-                pushText(bobTheBuilder.toString());
-                 */
             }
             case DISPLAY_MAIL_INFO -> {
                 StringBuilder bobTheBuilder = new StringBuilder();
                 bobTheBuilder.append("Welcome user. Mailbox content :\n");
-                /*
-                ArrayList<String> lines = cwd.getContent().split("\n");
-                for (String line : lines) {
+                // TODO : make it work with ugo's files
+                cwd = cwd.getFolder("mail");
+                for (String line : cwd.getContent().split("\n")) {
                     pushText(line);
                 }
-                 */
+                cwd = cwd.getParent();
             }
             case DISPLAY_MAIL_CONTENT -> {
-                /*
-                for (File file : resultAction.getArgs()) {
-                    pushText("Mail " + file.name + " :");
-                    for (String line : file.getContent().split("\n")) {
+                cwd = cwd.getFolder("mail");
+                for (String filename : resultAction.getArgs()) {
+                    pushText("Mail " + filename.substring(0, filename.length() - 4) + " :");
+                    for (String line : cwd.getFile(filename).getContent().split("\n")) {
                         pushText(line);
                     }
                     pushText("");
                 }
-                 */
+                cwd = cwd.getParent();
             }
         }
     }
@@ -144,7 +143,7 @@ public class MainSceneController extends Controller {
      * Executes the given command. For example : pushCommand("ls") types in 'ls' and sends the command.
      * @param command The command to execute
      */
-    private void pushCommand(String command) {
+    private void pushCommand(String command) throws IOException, ParseException {
         inputTextField.setText(command);
         handleInputTextFieldOnKeyReleased(new KeyEvent(null, null, null, "\n", "\n", KeyCode.ENTER, false, false, false, false));
     }
