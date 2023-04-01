@@ -21,8 +21,7 @@
           "name":"mail2",
           "ext":"txt",
           "perms":"Employee",
-          "content":"Delivered-From: server@edoo.com/nDelivered-To: theo@edoo.com/nSubject: Error in your crontab/n/ncrontab error in line 1 : bash: rebot: command not found/nYour computer is falling back to a 2 minutes debug session/nYou can look at your crontab with : crontab -e/n
-"
+          "content":"Delivered-From: server@edoo.com/nDelivered-To: theo@edoo.com/nSubject: Error in your crontab/n/ncrontab error in line 1 : bash: rebot: command not found/nYour computer is falling back to a 2 minutes debug session/nYou can look at your crontab with : crontab -e/n"
         }
       ]
     }
