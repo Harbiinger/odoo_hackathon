@@ -13,7 +13,7 @@
           "name":"mail1",
           "ext":"txt",
           "perms":"Employee",
-          "content":"Delivered-From: ceo@edoo.com\nDelivered-To: user@edoo.com\nSubject: Your tasks for this session\n\nCan you please make the HTMl and CSS for our new Chinese accounting module ?"
+          "content":"Delivered-From: ceo@edoo.com\nDelivered-To: theo@edoo.com\nSubject: Your tasks for this session\n\nCan you please make the HTMl and CSS for our new Chinese accounting module ?"
         },
 
         {
@@ -21,7 +21,7 @@
           "name":"mail2",
           "ext":"txt",
           "perms":"Employee",
-          "content":"Delivered-From: server@edoo.com\nDelivered-To: user@edoo.com\nSubject: Error in your crontab\ncrontab error in line 1 : bash: rebot: command not found\nYour computer is falling back to a 2 minutes debug session\nYou can look at your crontab with : crontab -e"
+          "content":"Delivered-From: server@edoo.com\nDelivered-To: theo@edoo.com\nSubject: Error in your crontab\ncrontab error in line 1 : bash: rebot: command not found\nYour computer is falling back to a 2 minutes debug session\nYou can look at your crontab with : crontab -e"
         }
       ]
     }
