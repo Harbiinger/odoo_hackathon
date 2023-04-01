@@ -46,7 +46,9 @@ public class CommandHandler {
             case NOT_FOUND -> {
                 return new Action(Actions.ERROR_COMMAND_NOT_FOUND, command.isRoot());
             }
-            case SHUTDOWN -> {}
+            case SHUTDOWN -> {
+                return new Action(Actions.SHUTDOWN, command.isRoot());
+            }
             case REBOOT -> {
                 return new Action(Actions.REBOOT, command.isRoot());
             }

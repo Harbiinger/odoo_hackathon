@@ -55,7 +55,7 @@ public class MainSceneController extends Controller {
     }
 
     @FXML
-    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) throws IOException, ParseException {
+    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) throws InterruptedException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             if (lineCount == MAX_LINES) {
@@ -80,7 +80,7 @@ public class MainSceneController extends Controller {
         }
     }
 
-    private void handleResultAction(Action resultAction, String initialInputCommand) {
+    private void handleResultAction(Action resultAction, String initialInputCommand) throws InterruptedException {
         switch (resultAction.getAction()) {
             case CLEAR -> clear();
             case ERROR_NOT_ENOUGH_ARGS -> notEnoughArgs(initialInputCommand);
@@ -99,6 +99,7 @@ public class MainSceneController extends Controller {
             case LIST_CRONS -> listCrons();
             case REBOOT -> reboot();
             case INSUFFICIENT_PERMISSION -> insufficientPermission();
+            case SHUTDOWN -> shutdown();
         }
     }
 
@@ -222,6 +223,13 @@ public class MainSceneController extends Controller {
         pushText("Insufficient permission");
     }
 
+    private void shutdown() throws InterruptedException {
+        pushText("Shutting down...");
+        wait(1000);
+        pushText("System shut down.");
+
+    }
+
     private String formatLines() {
         StringBuilder bobTheBuilder = new StringBuilder();
         for (int i = 0; i < lines.size(); i++) {
@@ -235,7 +243,7 @@ public class MainSceneController extends Controller {
      * Executes the given command. For example : pushCommand("ls") types in 'ls' and sends the command.
      * @param command The command to execute
      */
-    private void pushCommand(String command) throws IOException, ParseException {
+    private void pushCommand(String command) throws InterruptedException {
         inputTextField.setText(command);
         handleInputTextFieldOnKeyReleased(new KeyEvent(null, null, null, "\n", "\n", KeyCode.ENTER, false, false, false, false));
     }
