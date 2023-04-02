@@ -26,8 +26,6 @@ public class CommandHandler {
                 if (command.getArgs().size() > 1) return new Action(Actions.ERROR_TOO_MANY_ARGS, command.isRoot());
                 return new Action(Actions.CHANGE_DIRECTORY, command.getArgs(), command.isRoot());
             }
-            case OPEN -> {
-            }
             case SU -> {
                 if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS, command.isRoot());
                 if (command.getArgs().size() > 1) return new Action(Actions.ERROR_TOO_MANY_ARGS, command.isRoot());

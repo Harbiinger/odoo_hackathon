@@ -21,8 +21,6 @@ public class Analyser {
                 return new Command(Commands.LS, lexems, issuer);
             case "cd":
                 return new Command(Commands.CD, lexems, issuer);
-            case "open":
-                return new Command(Commands.OPEN, lexems, issuer);
             case "browser":
                 return new Command(Commands.BROWSER, issuer);
             case "cat":

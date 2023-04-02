@@ -11,11 +11,8 @@ import javafx.scene.media.MediaView;
 import java.net.URL;
 
 public class MediaSceneController extends Controller {
-
     @FXML
     private StackPane mainPane;
-
-
 
     @FXML
     void initialize() {
@@ -40,6 +37,4 @@ public class MediaSceneController extends Controller {
             // TODO : set end scene here
         });
     }
-
-
 }
