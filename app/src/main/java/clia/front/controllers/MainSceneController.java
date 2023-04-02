@@ -12,14 +12,21 @@ import clia.front.actions.Action;
 import clia.front.navigation.Flow;
 import clia.front.scenes.SceneLoader;
 import clia.front.scenes.Scenes;
+import com.sun.tools.javac.Main;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
@@ -123,9 +130,7 @@ public class MainSceneController extends Controller {
         }
         switch (pid) {
             case 2177 -> {
-                Scenes.MediaScene = SceneLoader.load("MediaScene");
-                App.setScene(Scenes.MediaScene);
-                Flow.forward(Scenes.MediaScene);
+                video();
             }
             case 2178 -> pushText("Can't kill process mngr. Important tasks are running.");
             case 2179 -> pushText("Can't kill process theo. Important tasks are running.");
@@ -333,5 +338,26 @@ public class MainSceneController extends Controller {
         } else lineCount++;
         lines.add(text);
         historyLabel.setText(formatLines());
+    }
+
+    public void video() {
+        URL url = App.class.getResource("/video/jellyfish jam.mp4" );
+        Media media = new Media(url.toString());
+
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        System.out.println("Media loaded");
+        MediaView mediaView = new MediaView(mediaPlayer);
+        System.out.println("MediaView created");
+
+        StackPane mainPane = new StackPane();
+        mainPane.getChildren().add(mediaView);
+        System.out.println("StackPane created");
+
+        mediaPlayer.play();
+        System.out.println("Media playing");
+
+        Scene scene = new Scene(mainPane, 1280, 720);
+
+        App.setScene(scene);
     }
 }

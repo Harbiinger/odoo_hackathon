@@ -15,23 +15,24 @@ public class MediaSceneController extends Controller {
     @FXML
     private StackPane mainPane;
 
-    @FXML
-    private MediaView mediaView;
 
 
     @FXML
     void initialize() {
-        URL url = App.class.getResource("/video/Galaxy_Brain_meme.mp4" );
+        URL url = App.class.getResource("/video/jellyfish jam.mp4" );
         Media media = new Media(url.toString());
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
-
-        mediaView = new MediaView(mediaPlayer);
+        System.out.println("Media loaded");
+        MediaView mediaView = new MediaView(mediaPlayer);
+        System.out.println("MediaView created");
 
         mainPane = new StackPane();
         mainPane.getChildren().add(mediaView);
+        System.out.println("StackPane created");
 
         mediaPlayer.play();
+        System.out.println("Media playing");
 
         mediaPlayer.setOnEndOfMedia(() -> {
             mediaPlayer.stop();
