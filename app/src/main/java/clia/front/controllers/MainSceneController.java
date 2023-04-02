@@ -1,5 +1,6 @@
 package clia.front.controllers;
 
+import clia.App;
 import clia.back.fs.File;
 import clia.back.fs.Folder;
 import clia.back.fs.Initialiser;
@@ -8,6 +9,9 @@ import clia.cmd.Analyser;
 import clia.cmd.Command;
 import clia.cmd.CommandHandler;
 import clia.front.actions.Action;
+import clia.front.navigation.Flow;
+import clia.front.scenes.SceneLoader;
+import clia.front.scenes.Scenes;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -47,7 +51,6 @@ public class MainSceneController extends Controller {
     @FXML
     void initialize() throws IOException, ParseException {
         cwd = initialiser.Init();
-        // TODO : this can be used as "clear" command code to execute in the handler if command == clear
         pushText("Welcome to TTWhy !");
         // TODO : make date = now - 20 min
         // TODO : time loop duration is a variable
@@ -120,8 +123,9 @@ public class MainSceneController extends Controller {
         }
         switch (pid) {
             case 2177 -> {
-                System.out.println("Killing process " + arg);
-                // TODO : KILL HERE
+                Scenes.MediaScene = SceneLoader.load("MediaScene");
+                App.setScene(Scenes.MediaScene);
+                Flow.forward(Scenes.MediaScene);
             }
             case 2178 -> pushText("Can't kill process mngr. Important tasks are running.");
             case 2179 -> pushText("Can't kill process theo. Important tasks are running.");
