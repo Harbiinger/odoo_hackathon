@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.2"
+<AnchorPane fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.2"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="clia.front.controllers.MainSceneController">
     <StackPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: rgb(0,0,0);">
         <StackPane maxHeight="680.0" maxWidth="1242.0" minHeight="680.0" minWidth="1242.0" prefHeight="680.0"

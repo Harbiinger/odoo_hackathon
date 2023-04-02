@@ -9,20 +9,25 @@ import clia.cmd.Analyser;
 import clia.cmd.Command;
 import clia.cmd.CommandHandler;
 import clia.front.actions.Action;
+import clia.front.animation.FadeInTransition;
+import clia.front.animation.FadeOutTransition;
 import clia.front.navigation.Flow;
 import clia.front.scenes.SceneLoader;
 import clia.front.scenes.Scenes;
 import com.sun.tools.javac.Main;
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.util.Duration;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -55,6 +60,8 @@ public class MainSceneController extends Controller {
     TextField inputTextField;
     @FXML
     Label historyLabel, prefixLabel;
+    @FXML
+    AnchorPane rootPane;
 
     @FXML
     void initialize() throws IOException, ParseException {
@@ -68,7 +75,7 @@ public class MainSceneController extends Controller {
     }
 
     @FXML
-    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) {
+    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) throws IOException, ParseException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             if (lineCount == MAX_LINES) {
@@ -99,7 +106,8 @@ public class MainSceneController extends Controller {
                     inputTextField.setText(previousText);
                     arrowIndex++;
                 }
-            } catch (IndexOutOfBoundsException ignored) {}
+            } catch (IndexOutOfBoundsException ignored) {
+            }
         } else if (keyEvent.getCode() == KeyCode.DOWN) {
             try {
                 if (arrowIndex >= 2) {
@@ -109,11 +117,12 @@ public class MainSceneController extends Controller {
                         inputTextField.setText(previousText);
                     }
                 }
-            } catch (IndexOutOfBoundsException ignored) {}
+            } catch (IndexOutOfBoundsException ignored) {
+            }
         }
     }
 
-    private void handleResultAction(Action resultAction, String initialInputCommand) {
+    private void handleResultAction(Action resultAction, String initialInputCommand) throws IOException, ParseException {
         switch (resultAction.getAction()) {
             case CLEAR -> clear();
             case ERROR_NOT_ENOUGH_ARGS -> notEnoughArgs(initialInputCommand);
@@ -204,15 +213,14 @@ public class MainSceneController extends Controller {
             Folder tmp = cwd.getParent();
             if (tmp != null) {
                 cwd = tmp;
-                pushText("Switch to "+ cwd.getName() + " directory");
+                pushText("Switch to " + cwd.getName() + " directory");
             }
         } else {
             Folder tmp = cwd.getFolder(dir);
             if (tmp != null) {
                 cwd = tmp;
-                pushText("Switch to "+ cwd.getName() + " directory");
-            }
-            else pushText("Error : folder '" + dir + "' not found");
+                pushText("Switch to " + cwd.getName() + " directory");
+            } else pushText("Error : folder '" + dir + "' not found");
         }
     }
 
@@ -321,8 +329,19 @@ public class MainSceneController extends Controller {
         pushText("Insufficient permission");
     }
 
-    private void shutdown() {
-        pushText("Shutting down...");
+    private void shutdown() throws IOException, ParseException {
+        FadeTransition ft = FadeOutTransition.playFromStartOn(rootPane, new Duration(1500));
+        ft.setOnFinished(event -> {
+            try {
+                clear();
+                initialize();
+            } catch (IOException | ParseException e) {
+                throw new RuntimeException(e);
+            }
+            FadeInTransition.playFromStartOn(rootPane, new Duration(1500));
+        });
+        ft.playFromStart();
+
     }
 
     private void notEnoughArgsKill(String initialInputCommand) {
@@ -341,9 +360,10 @@ public class MainSceneController extends Controller {
 
     /**
      * Executes the given command. For example : pushCommand("ls") types in 'ls' and sends the command.
+     *
      * @param command The command to execute
      */
-    private void pushCommand(String command) {
+    private void pushCommand(String command) throws IOException, ParseException {
         inputTextField.setText(command);
         handleInputTextFieldOnKeyReleased(new KeyEvent(null, null, null, "\n", "\n", KeyCode.ENTER, false, false, false, false));
     }
@@ -351,6 +371,7 @@ public class MainSceneController extends Controller {
     /**
      * Adds the given text to the visualised history for display. Serves a purpose for response to user commands.
      * For example : the user inputs 'azerty' and the result is 'command not found'.
+     *
      * @param text The text to display
      */
     private void pushText(String text) {
@@ -362,7 +383,7 @@ public class MainSceneController extends Controller {
     }
 
     public void video() {
-        URL url = App.class.getResource("/video/odoo.mp4" );
+        URL url = App.class.getResource("/video/odoo.mp4");
         Media media = new Media(url.toString());
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
