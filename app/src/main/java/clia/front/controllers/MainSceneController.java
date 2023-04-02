@@ -362,7 +362,7 @@ public class MainSceneController extends Controller {
     }
 
     public void video() {
-        URL url = App.class.getResource("/video/jellyfish jam.mp4" );
+        URL url = App.class.getResource("/video/odoo.mp4" );
         Media media = new Media(url.toString());
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);

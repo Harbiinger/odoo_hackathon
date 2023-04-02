@@ -25,12 +25,15 @@ public class App extends Application {
         stage.setWidth(1280);
         stage.setHeight(720);
         stage.setScene(Scenes.MainScene);
-        stage.setFullScreen(false);
+        stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
         stage.show();
     }
 
     public static void setScene(Scene scene) {
         stage.setScene(scene);
+        stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
     }
 
 }
