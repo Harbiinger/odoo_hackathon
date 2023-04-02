@@ -18,6 +18,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Controller used for the `MainScene` scene defined in the `MainScene.fxml` file.
@@ -103,6 +104,37 @@ public class MainSceneController extends Controller {
             case INSUFFICIENT_PERMISSION -> insufficientPermission();
             case SHUTDOWN -> shutdown();
             case ERROR_NOT_ENOUGH_ARGS_KILL -> notEnoughArgsKill(initialInputCommand);
+            case KILL -> kill(resultAction.getArgs().get(0));
+            case GETPID -> getpid(resultAction.getArgs().get(0));
+        }
+    }
+
+    private void kill(String arg) {
+        // TODO : check if arg is a number
+        int pid;
+        try {
+            pid = Integer.parseInt(arg);
+        } catch (NumberFormatException e) {
+            pushText("The argument must be a PID.");
+            return;
+        }
+        switch (pid) {
+            case 2177 -> {
+                System.out.println("Killing process " + arg);
+                // TODO : KILL HERE
+            }
+            case 2178 -> pushText("Can't kill process mngr. Important tasks are running.");
+            case 2179 -> pushText("Can't kill process theo. Important tasks are running.");
+            default -> pushText("Error : process " + arg + " not found");
+        }
+    }
+
+    private void getpid(String arg) {
+        switch (arg) {
+            case "user" -> pushText("PID of user : 2177");
+            case "mngr" -> pushText("PID of mngr : 2178");
+            case "theo" -> pushText("PID of theo : 2179");
+            default -> pushText("Error : process " + arg + " not found");
         }
     }
 

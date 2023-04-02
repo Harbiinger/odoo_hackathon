@@ -45,6 +45,8 @@ public class Analyser {
                 return new Command(Commands.SUDO, lexems, issuer);
             case "kill":
                 return new Command(Commands.KILL, lexems, issuer);
+            case "getpid":
+                return new Command(Commands.GETPID, lexems, issuer);
             default:
                 return new Command(Commands.NOT_FOUND, issuer);
         }
