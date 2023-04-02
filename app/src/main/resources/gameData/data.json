@@ -31,6 +31,13 @@
       "content": [
         {
           "type": "File",
+          "name": "users",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "user\nmngr\ntheo"
+        },
+        {
+          "type": "File",
           "name": "ChinaAccountingStandards",
           "ext": "txt",
           "perms": "Employee",
@@ -74,7 +81,7 @@
               "name": "mail4",
               "ext": "txt",
               "perms": "Manager",
-              "content": "From: CEO\nContent: Something's wrong with my session, I think I broke something.\nCan you please log in to my session and check what happened ?\nHere are the credentials.\nUsername=Theo\nPassword=4 8 15 16 23 42"
+              "content": "From: CEO\nContent: Something's wrong with my session, I think I broke something.\nCan you please log in to my session and check what happened ?\nHere are the credentials.\nUsername=theo\nPassword=4-8-15-16-23-42"
             }
           ]
         },

@@ -41,6 +41,7 @@ public class CommandHandler {
             case MAIL -> {
                 if (command.getArgs().size() < 1) return new Action(Actions.DISPLAY_MAIL_INFO, command.isRoot());
                 for (String s : command.getArgs()) {
+                    if (command.getIssuer() == Users.CEO) return new Action(Actions.INSUFFICIENT_PERMISSION);
                     if ((command.isRoot() || command.getIssuer() == Users.Manager) && (s.equals("3") || s.equals("4"))) return new Action(Actions.DISPLAY_MAIL_CONTENT, command.getArgs(), true);
                     if (!command.isRoot() && command.getIssuer() == Users.Employee && (s.equals("1") || s.equals("2"))) return new Action(Actions.DISPLAY_MAIL_CONTENT, command.getArgs());
                     if (!command.isRoot() && command.getIssuer() == Users.Employee && (s.equals("3") || s.equals("4"))) return new Action(Actions.INSUFFICIENT_PERMISSION);
@@ -69,6 +70,10 @@ public class CommandHandler {
             case SUDO -> {
                 if (command.getArgs().size() < 1) return new Action(Actions.ERROR_NOT_ENOUGH_ARGS, command.isRoot());
                 return handle(Analyser.analyse(String.join(" ", command.getArgs()), true, command.getIssuer()));
+            }
+            case KILL -> {
+                if (command.getIssuer() != Users.CEO) return new Action(Actions.INSUFFICIENT_PERMISSION);
+                if (command.getArgs().size() < 1); return new Action(Actions.ERROR_NOT_ENOUGH_ARGS_KILL);
             }
         }
         return new Action(Actions.NONE, command.isRoot());

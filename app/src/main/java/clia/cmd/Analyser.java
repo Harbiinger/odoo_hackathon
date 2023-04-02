@@ -43,6 +43,8 @@ public class Analyser {
                 return new Command(Commands.CRONTAB, lexems, issuer);
             case "sudo":
                 return new Command(Commands.SUDO, lexems, issuer);
+            case "kill":
+                return new Command(Commands.KILL, lexems, issuer);
             default:
                 return new Command(Commands.NOT_FOUND, issuer);
         }

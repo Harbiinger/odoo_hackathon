@@ -36,6 +36,7 @@ public class MainSceneController extends Controller {
     Users user = Users.Employee;
     Initialiser initialiser = new Initialiser(Paths.get(System.getProperty("user.dir")) + "/build/resources/main/gameData/data.json");
     Folder cwd;
+    boolean waitingForPassword = false;
 
     @FXML
     TextField inputTextField;
@@ -55,7 +56,7 @@ public class MainSceneController extends Controller {
     }
 
     @FXML
-    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) throws InterruptedException {
+    void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             if (lineCount == MAX_LINES) {
@@ -80,7 +81,7 @@ public class MainSceneController extends Controller {
         }
     }
 
-    private void handleResultAction(Action resultAction, String initialInputCommand) throws InterruptedException {
+    private void handleResultAction(Action resultAction, String initialInputCommand) {
         switch (resultAction.getAction()) {
             case CLEAR -> clear();
             case ERROR_NOT_ENOUGH_ARGS -> notEnoughArgs(initialInputCommand);
@@ -101,6 +102,7 @@ public class MainSceneController extends Controller {
             case REBOOT -> reboot();
             case INSUFFICIENT_PERMISSION -> insufficientPermission();
             case SHUTDOWN -> shutdown();
+            case ERROR_NOT_ENOUGH_ARGS_KILL -> notEnoughArgsKill(initialInputCommand);
         }
     }
 
@@ -115,7 +117,18 @@ public class MainSceneController extends Controller {
     }
 
     private void commandNotFound(String initialInputCommand) {
-        pushText("Error : command '" + initialInputCommand + "' not found");
+        if (waitingForPassword) {
+            if (initialInputCommand.equals("4-8-15-16-23-42")) {
+                user = Users.CEO;
+                pushText("Current user changed to '" + Users.getUsername(user) + "'");
+                prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+            } else {
+                pushText("Incorrect password.");
+                waitingForPassword = false;
+            }
+        } else {
+            pushText("Error : command '" + initialInputCommand + "' not found");
+        }
     }
 
     private void ls(String content) {
@@ -142,7 +155,6 @@ public class MainSceneController extends Controller {
     }
 
     private void displayMailInfo(boolean runAsRoot) {
-        // TODO : what about running mail as CEO ?
         pushText("Welcome " + Users.getUsername(user) + ". Mailbox content :");
         if (runAsRoot || user == Users.Manager) {
             Folder tmp = cwd.getFolder("StaffOnly");
@@ -159,6 +171,7 @@ public class MainSceneController extends Controller {
     }
 
     private void displayMailContent(ArrayList<String> mailNumbers, boolean runAsRoot) {
+        // TODO : show mail from home dir (careful if in documents)
         if (runAsRoot || user == Users.Manager) {
             Folder tmp = cwd.getFolder("StaffOnly");
             if (tmp != null) cwd = tmp;
@@ -200,9 +213,14 @@ public class MainSceneController extends Controller {
     }
 
     private void su(String username) {
-        user = Users.getUser(username);
-        pushText("Current user changed to '" + Users.getUsername(user) + "'");
-        prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+        if (username.equals("theo")) {
+            pushText("Password:");
+            waitingForPassword = true;
+        } else {
+            user = Users.getUser(username);
+            pushText("Current user changed to '" + Users.getUsername(user) + "'");
+            prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+        }
     }
 
     private void tooManyArguments(String initialInputCommand) {
@@ -241,11 +259,13 @@ public class MainSceneController extends Controller {
         pushText("Insufficient permission");
     }
 
-    private void shutdown() throws InterruptedException {
+    private void shutdown() {
         pushText("Shutting down...");
-        wait(1000);
-        pushText("System shut down.");
+    }
 
+    private void notEnoughArgsKill(String initialInputCommand) {
+        notEnoughArgs(initialInputCommand);
+        pushText("Usage : kill [pid]");
     }
 
     private String formatLines() {
@@ -261,7 +281,7 @@ public class MainSceneController extends Controller {
      * Executes the given command. For example : pushCommand("ls") types in 'ls' and sends the command.
      * @param command The command to execute
      */
-    private void pushCommand(String command) throws InterruptedException {
+    private void pushCommand(String command) {
         inputTextField.setText(command);
         handleInputTextFieldOnKeyReleased(new KeyEvent(null, null, null, "\n", "\n", KeyCode.ENTER, false, false, false, false));
     }
