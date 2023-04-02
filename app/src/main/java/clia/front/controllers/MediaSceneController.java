@@ -21,7 +21,7 @@ public class MediaSceneController extends Controller {
 
     @FXML
     void initialize() {
-        URL url = App.class.getResource("/misc/jellyfish jam.mp4" );
+        URL url = App.class.getResource("/video/Galaxy_Brain_meme.mp4" );
         Media media = new Media(url.toString());
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
