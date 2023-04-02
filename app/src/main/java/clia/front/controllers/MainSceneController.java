@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -66,6 +67,8 @@ public class MainSceneController extends Controller {
     @FXML
     void initialize() throws IOException, ParseException {
         cwd = initialiser.Init();
+        user = Users.Employee;
+        prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
         pushText("Welcome to TTWhy !");
         // TODO : make date = now - 20 min
         // TODO : time loop duration is a variable
@@ -133,7 +136,6 @@ public class MainSceneController extends Controller {
             case DISPLAY_MAIL_CONTENT -> displayMailContent(resultAction.getArgs(), resultAction.isAsRoot());
             case DISPLAY_CURRENT_USER -> whoami();
             case CHANGE_DIRECTORY -> cd(resultAction.getArgs().get(0));
-            // TODO : password
             case CHANGE_USER -> su(resultAction.getArgs().get(0));
             case ERROR_TOO_MANY_ARGS -> tooManyArguments(initialInputCommand);
             case INVALID_USERNAME -> invalidUsername(resultAction);
@@ -387,16 +389,20 @@ public class MainSceneController extends Controller {
         Media media = new Media(url.toString());
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
-        System.out.println("Media loaded");
         MediaView mediaView = new MediaView(mediaPlayer);
-        System.out.println("MediaView created");
+
+        Pane pane = new Pane();
+        pane.setOpacity(0);
+        pane.setPrefSize(1280, 720);
+        pane.setStyle("-fx-background-color: black;");
+
+        System.out.println(pane);
 
         StackPane mainPane = new StackPane();
         mainPane.getChildren().add(mediaView);
-        System.out.println("StackPane created");
+        mainPane.getChildren().add(pane);
 
         mediaPlayer.play();
-        System.out.println("Media playing");
 
         Scene scene = new Scene(mainPane, 1280, 720);
 
