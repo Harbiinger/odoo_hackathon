@@ -37,6 +37,7 @@ import java.util.Random;
 public class MainSceneController extends Controller {
     int lineCount = 1;
     final int MAX_LINES = 19;
+    int arrowIndex = 0;
     /**
      * List of all inputs. Coincides with the commands list.
      */
@@ -77,6 +78,7 @@ public class MainSceneController extends Controller {
             String input = inputTextField.getText();
 
             if (input.equals("")) lines.add(" ");
+            if (input.equals("")) commands.add(null);
             else {
                 lines.add("[" + Users.getUsername(user) + "@edoo ~]$ " + input);
                 // Send the input to the analyser and retrieve the resulting command
@@ -89,6 +91,25 @@ public class MainSceneController extends Controller {
 
             inputTextField.setText("");
             historyLabel.setText(formatLines());
+            arrowIndex = 1;
+        } else if (keyEvent.getCode() == KeyCode.UP) {
+            try {
+                String previousText = lines.get(lines.size() - arrowIndex * 2).substring(15);
+                if (!previousText.equals("y !") && !previousText.equals("read emails. Open mailbox via the 'mail' command.")) {
+                    inputTextField.setText(previousText);
+                    arrowIndex++;
+                }
+            } catch (IndexOutOfBoundsException ignored) {}
+        } else if (keyEvent.getCode() == KeyCode.DOWN) {
+            try {
+                if (arrowIndex >= 2) {
+                    arrowIndex--;
+                    String previousText = lines.get(lines.size() - arrowIndex * 2).substring(15);
+                    if (!previousText.equals("y !") && !previousText.equals("read emails. Open mailbox via the 'mail' command.")) {
+                        inputTextField.setText(previousText);
+                    }
+                }
+            } catch (IndexOutOfBoundsException ignored) {}
         }
     }
 
