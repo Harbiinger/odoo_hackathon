@@ -69,7 +69,6 @@ public class Initialiser {
         f.addAll(readFolder(json, f));
         return f;
     }
-
     public static void main(String[] args) throws IOException, ParseException {
         Path path = Paths.get(System.getProperty("user.dir"));
         String stringPath = path.toString();
