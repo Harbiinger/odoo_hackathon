@@ -1,27 +1,117 @@
 {
-  "type":"Folder",
-  "name":"home",
-  "perms":"Employee",
-  "content":[
+  "type": "Folder",
+  "name": "home",
+  "perms": "Employee",
+  "content": [
     {
-      "type":"Folder",
-      "name":"Mail",
-      "perms":"Employee",
-      "content":[
+      "type": "Folder",
+      "name": "mail",
+      "perms": "Employee",
+      "content": [
         {
-          "type":"File",
-          "name":"mail1",
-          "ext":"txt",
-          "perms":"Employee",
-          "content":"Delivered-From: ceo@edoo.com\nDelivered-To: theo@edoo.com\nSubject: Your tasks for this session\n\nCan you please make the HTMl and CSS for our new Chinese accounting module ?/n"
+          "type": "File",
+          "name": "mail1",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "Delivered-From: ceo@edoo.com\nDelivered-To: theo@edoo.com\nSubject: Your tasks for this session\n\nCan you please make the HTMl and CSS for our new Chinese accounting module ?"
         },
-
         {
-          "type":"File",
-          "name":"mail2",
-          "ext":"txt",
-          "perms":"Employee",
-          "content":"Delivered-From: server@edoo.com/nDelivered-To: theo@edoo.com/nSubject: Error in your crontab/n/ncrontab error in line 1 : bash: rebot: command not found/nYour computer is falling back to a 2 minutes debug session/nYou can look at your crontab with : crontab -e/n"
+          "type": "File",
+          "name": "mail2",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "Delivered-From: server@edoo.com\nDelivered-To: theo@edoo.com\nSubject: Error in your crontab\ncrontab error in line 1 : bash: rebot: command not found\nYour computer is falling back to a 2 minutes debug session\nYou can look at your crontab with : crontab -l"
+        }
+      ]
+    },
+    {
+      "type": "Folder",
+      "name": "documents",
+      "perms": "Employee",
+      "content": [
+        {
+          "type": "File",
+          "name": "users",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "user\nmngr\ntheo"
+        },
+        {
+          "type": "File",
+          "name": "ChinaAccountingStandards",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "The process of increasing economic openness and liberalization has been particularly prevalent in the past decade..."
+        },
+        {
+          "type": "File",
+          "name": "EdooDevelopmentEssentials",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "Edoo is a fully-featured open source platform for building applications.\nBased on this core framework, a suite of integrated applications was built, covering all business areas..."
+        },
+        {
+          "type": "File",
+          "name": "LinuxAdministering",
+          "ext": "txt",
+          "perms": "Employee",
+          "content": "Linux is a Unix-like and mostly POSIX-compliant computer operating system assembled under the model of free and open source software development and distribution..."
+        }
+      ]
+    },
+    {
+      "type": "Folder",
+      "name": "StaffOnly",
+      "perms": "Manager",
+      "content": [
+        {
+          "type": "Folder",
+          "name": "mail",
+          "perms": "Manager",
+          "content": [
+            {
+              "type": "File",
+              "name": "mail3",
+              "ext": "txt",
+              "perms": "Manager",
+              "content": "From: CEO\nContent: Edoo has now acquired the company 'Brain Fogger'.\nThey created a device capable of using people's brains has computing power.\nThis technology will be a game changer for our company.\nIt will allow us to reduce our costs and greatly increase our profits.\nBut this technology must remove any free will from the human resource in order to\nproperly work. This information should NEVER be revealed to the public or it could\nmeans the end of our activities. This is very risky but will be very profitable.\nI hope you are aware of our current situation and you will act with great caution."
+            },
+            {
+              "type": "File",
+              "name": "mail4",
+              "ext": "txt",
+              "perms": "Manager",
+              "content": "From: CEO\nContent: Something's wrong with my session, I think I broke something.\nCan you please log in to my session and check what happened ?\nHere are the credentials.\nUsername=theo\nPassword=4-8-15-16-23-42"
+            }
+          ]
+        },
+        {
+          "type": "File",
+          "name": "Sales",
+          "ext": "txt",
+          "perms": "Manager",
+          "content": "Sales : \nLast month : 12M\nThis month : 15M"
+        }
+      ]
+    },
+    {
+      "type": "Folder",
+      "name": "CEOHome",
+      "perms": "CEO",
+      "content": [
+        {
+          "type": "File",
+          "name": "notes",
+          "perms": "Manager",
+          "ext": "txt",
+          "content": "This new device works really well.\nSlaves don't know they're working for me since 15 years.\nIn case of emergency, don't forget that the only way out is killing the session while\nlogged in to my account."
+        },
+        {
+          "type": "File",
+          "name": "beer",
+          "perms": "Manager",
+          "ext": "txt",
+          "content": "We managed to create a new type of beer that allows our slaves to work non-stop without needing to rest.\nWe called it BIG BANG"
         }
       ]
     }

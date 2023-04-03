@@ -29,7 +29,6 @@ public class SceneLoader {
             return new Scene(sceneParent, 1280, 720);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println(url + " could not be found");
         }
         return null;
     }
