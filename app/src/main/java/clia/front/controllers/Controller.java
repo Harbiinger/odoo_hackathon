@@ -16,10 +16,9 @@ public abstract class Controller {
      */
     public static String formatNewCSSLineMouseEntered(Button button) {
         String CSSLine = "";
-        String buttonText = button.getText();
-        if (buttonText.equals("Load") || buttonText.equals("Linux")) {
-            // Big buttons
-            CSSLine = "-fx-background-color: rgb(218, 163, 171); -fx-border-color: rgb(10, 10, 20); -fx-border-width: 2; -fx-border-insets: -1; -fx-border-radius: 20; -fx-background-radius: 20;";
+        String buttonID = button.getId();
+        if (buttonID.equals("something")) {
+            CSSLine = "some style";
         }
         return CSSLine;
     }
@@ -32,10 +31,9 @@ public abstract class Controller {
      */
     public static String formatNewCSSLineMouseExited(Button button) {
         String CSSLine = "";
-        String buttonText = button.getText();
-        if (buttonText.equals("Load") || buttonText.equals("Linux")) {
-            // Big buttons
-            CSSLine = "-fx-background-color: rgba(218, 163, 171, 0.7); -fx-border-color: rgb(10, 10, 20); -fx-border-width: 2; -fx-border-insets: -1; -fx-border-radius: 20; -fx-background-radius: 20;";
+        String buttonID = button.getId();
+        if (buttonID.equals("something")) {
+            CSSLine = "some style";
         }
         return CSSLine;
     }

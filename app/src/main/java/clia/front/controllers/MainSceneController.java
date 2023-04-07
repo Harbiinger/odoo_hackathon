@@ -8,13 +8,10 @@ import clia.back.fs.Users;
 import clia.cmd.Analyser;
 import clia.cmd.Command;
 import clia.cmd.CommandHandler;
+import clia.cmd.LinesBuffer;
 import clia.front.actions.Action;
 import clia.front.animation.FadeInTransition;
 import clia.front.animation.FadeOutTransition;
-import clia.front.navigation.Flow;
-import clia.front.scenes.SceneLoader;
-import clia.front.scenes.Scenes;
-import com.sun.tools.javac.Main;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -32,28 +29,26 @@ import javafx.util.Duration;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Controller used for the `MainScene` scene defined in the `MainScene.fxml` file.
  */
 public class MainSceneController extends Controller {
-    int lineCount = 1;
-    final int MAX_LINES = 19;
+    final int MAX_LINES = 18;
     int arrowIndex = 0;
-    /**
-     * List of all inputs. Coincides with the commands list.
-     */
-    ArrayList<String> lines = new ArrayList<>();
+    LinesBuffer<String> linesBuffer = new LinesBuffer<>(MAX_LINES);
     /**
      * List of all commands. Coincides with the lines list.
      */
     ArrayList<Command> commands = new ArrayList<>();
     Users user = Users.Employee;
-    Initialiser initialiser = new Initialiser(Paths.get(System.getProperty("user.dir")) + "/build/resources/main/gameData/data.json");
+    Initialiser initialiser = new Initialiser(Paths.get(System.getProperty("user.dir")) + "/build/resources/main/files/filesystem.json");
     Folder cwd;
     boolean waitingForPassword = false;
 
@@ -70,9 +65,9 @@ public class MainSceneController extends Controller {
         user = Users.Employee;
         prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
         pushText("Welcome to TTWhy !");
-        // TODO : make date = now - 20 min
-        // TODO : time loop duration is a variable
-        pushText("Last login: Fri Mar 31 15:17:09 2023 from 163.221.18.5");
+        LocalDateTime dateTime = LocalDateTime.now().minusMinutes(20);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy");
+        pushText("Last login: " + dateTime.format(formatter) + " from " + InetAddress.getLocalHost().getHostAddress());
         pushText("You have two unread emails. Open mailbox via the 'mail' command.");
         pushText(" ");
     }
@@ -81,16 +76,13 @@ public class MainSceneController extends Controller {
     void handleInputTextFieldOnKeyReleased(KeyEvent keyEvent) throws IOException, ParseException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
-            if (lineCount == MAX_LINES) {
-                lines.remove(0);
-            } else lineCount++;
 
             String input = inputTextField.getText();
 
-            if (input.equals("")) lines.add(" ");
+            if (input.equals("")) linesBuffer.add(" ");
             if (input.equals("")) commands.add(null);
             else {
-                lines.add("[" + Users.getUsername(user) + "@edoo ~]$ " + input);
+                linesBuffer.add("[" + Users.getUsername(user) + "@edoo ~]$ " + input);
                 // Send the input to the analyser and retrieve the resulting command
                 Command command = Analyser.analyse(input, user);
                 // Send the command to the handler and retrieve the potential actions that must be taken in the GUI
@@ -100,264 +92,61 @@ public class MainSceneController extends Controller {
             }
 
             inputTextField.setText("");
-            historyLabel.setText(formatLines());
+            historyLabel.setText(linesBuffer.formatBufferContent());
             arrowIndex = 1;
         } else if (keyEvent.getCode() == KeyCode.UP) {
+            /*
             try {
-                String previousText = lines.get(lines.size() - arrowIndex * 2).substring(15);
+                String previousText = linesBuffer.get(linesBuffer.size() - arrowIndex * 2).substring(15);
                 if (!previousText.equals("y !") && !previousText.equals("read emails. Open mailbox via the 'mail' command.")) {
                     inputTextField.setText(previousText);
                     arrowIndex++;
                 }
             } catch (IndexOutOfBoundsException ignored) {
             }
+             */
         } else if (keyEvent.getCode() == KeyCode.DOWN) {
+            /*
             try {
                 if (arrowIndex >= 2) {
                     arrowIndex--;
-                    String previousText = lines.get(lines.size() - arrowIndex * 2).substring(15);
+                    String previousText = linesBuffer.get(linesBuffer.size() - arrowIndex * 2).substring(15);
                     if (!previousText.equals("y !") && !previousText.equals("read emails. Open mailbox via the 'mail' command.")) {
                         inputTextField.setText(previousText);
                     }
                 }
             } catch (IndexOutOfBoundsException ignored) {
             }
+             */
         }
     }
 
     private void handleResultAction(Action resultAction, String initialInputCommand) throws IOException, ParseException {
+        ResultActionHandler handler = new ResultActionHandler();
+
         switch (resultAction.getAction()) {
-            case CLEAR -> clear();
-            case ERROR_NOT_ENOUGH_ARGS -> notEnoughArgs(initialInputCommand);
-            case ERROR_COMMAND_NOT_FOUND -> commandNotFound(initialInputCommand);
-            case DISPLAY_CONTENT_OF_FILE -> cat(resultAction.getArgs(), resultAction.isAsRoot());
-            case DISPLAY_DIRECTORY -> ls(cwd.getContent(resultAction.isAsRoot() ? Users.Manager : user));
-            case DISPLAY_MAIL_INFO -> displayMailInfo(resultAction.isAsRoot());
-            case DISPLAY_MAIL_CONTENT -> displayMailContent(resultAction.getArgs(), resultAction.isAsRoot());
-            case DISPLAY_CURRENT_USER -> whoami();
-            case CHANGE_DIRECTORY -> cd(resultAction.getArgs().get(0));
-            case CHANGE_USER -> su(resultAction.getArgs().get(0));
-            case ERROR_TOO_MANY_ARGS -> tooManyArguments(initialInputCommand);
-            case INVALID_USERNAME -> invalidUsername(resultAction);
-            case INVALID_MAIL_ID -> invalidMailID(resultAction.getArgs());
-            case INVALID_FLAG -> invalidFlag(resultAction.getArgs().get(0), initialInputCommand);
-            case LIST_CRONS -> listCrons();
-            case REBOOT -> reboot();
-            case INSUFFICIENT_PERMISSION -> insufficientPermission();
-            case SHUTDOWN -> shutdown();
-            case ERROR_NOT_ENOUGH_ARGS_KILL -> notEnoughArgsKill(initialInputCommand);
-            case KILL -> kill(resultAction.getArgs().get(0));
-            case GETPID -> getpid(resultAction.getArgs().get(0));
+            case CLEAR -> handler.handleCLEAR();
+            case ERROR_NOT_ENOUGH_ARGS -> handler.handleERROR_NOT_ENOUGH_ARGS(initialInputCommand);
+            case ERROR_COMMAND_NOT_FOUND -> handler.handlerERROR_COMMAND_NOT_FOUND(initialInputCommand);
+            case DISPLAY_CONTENT_OF_FILE -> handler.handleDISPLAY_CONTENT_OF_FILE(resultAction.getArgs(), resultAction.isAsRoot());
+            case DISPLAY_DIRECTORY -> handler.handleDISPLAY_DIRECTORY(cwd.getContent(resultAction.isAsRoot() ? Users.Manager : user));
+            case DISPLAY_MAIL_INFO -> handler.handleDISPLAY_MAIL_INFO(resultAction.isAsRoot());
+            case DISPLAY_MAIL_CONTENT -> handler.handleDISPLAY_MAIL_CONTENT(resultAction.getArgs(), resultAction.isAsRoot());
+            case DISPLAY_CURRENT_USER -> handler.handleDISPLAY_CURRENT_USER();
+            case CHANGE_DIRECTORY -> handler.handleCHANGE_DIRECTORY(resultAction.getArgs().get(0));
+            case CHANGE_USER -> handler.handleCHANGE_USER(resultAction.getArgs().get(0));
+            case ERROR_TOO_MANY_ARGS -> handler.handleERROR_TOO_MANY_ARGS(initialInputCommand);
+            case INVALID_USERNAME -> handler.handleINVALID_USERNAME(resultAction);
+            case INVALID_MAIL_ID -> handler.handleINVALID_MAIL_ID(resultAction.getArgs());
+            case INVALID_FLAG -> handler.handleINVALID_FLAG(resultAction.getArgs().get(0), initialInputCommand);
+            case LIST_CRONS -> handler.handleLIST_CRONS();
+            case REBOOT -> handler.handleREBOOT();
+            case INSUFFICIENT_PERMISSION -> handler.handleINSUFFICIENT_PERMISSION();
+            case SHUTDOWN -> handler.handleSHUTDOWN();
+            case ERROR_NOT_ENOUGH_ARGS_KILL -> handler.handleERROR_NOT_ENOUGH_ARGS_KILL(initialInputCommand);
+            case KILL -> handler.handleKILL(resultAction.getArgs().get(0));
+            case GETPID -> handler.handleGETPID(resultAction.getArgs().get(0));
         }
-    }
-
-    private void kill(String arg) {
-        // TODO : check if arg is a number
-        int pid;
-        try {
-            pid = Integer.parseInt(arg);
-        } catch (NumberFormatException e) {
-            pushText("The argument must be a PID.");
-            return;
-        }
-        switch (pid) {
-            case 2177 -> {
-                video();
-            }
-            case 2178 -> pushText("Can't kill process mngr. Important tasks are running.");
-            case 2179 -> pushText("Can't kill process theo. Important tasks are running.");
-            default -> pushText("Error : process " + arg + " not found");
-        }
-    }
-
-    private void getpid(String arg) {
-        switch (arg) {
-            case "user" -> pushText("PID of user : 2177");
-            case "mngr" -> pushText("PID of mngr : 2178");
-            case "theo" -> pushText("PID of theo : 2179");
-            default -> pushText("Error : process " + arg + " not found");
-        }
-    }
-
-    private void clear() {
-        for (int i = 0; i < MAX_LINES; i++) {
-            pushText("");
-        }
-    }
-
-    private void notEnoughArgs(String initialInputCommand) {
-        pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
-    }
-
-    private void commandNotFound(String initialInputCommand) {
-        if (waitingForPassword) {
-            if (initialInputCommand.equals("4-8-15-16-23-42")) {
-                user = Users.CEO;
-                pushText("Current user changed to '" + Users.getUsername(user) + "'");
-                prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
-            } else {
-                pushText("Incorrect password.");
-                waitingForPassword = false;
-            }
-        } else {
-            pushText("Error : command '" + initialInputCommand + "' not found");
-        }
-    }
-
-    private void ls(String content) {
-        for (String line : content.split("\n")) {
-            pushText(line);
-        }
-    }
-
-    private void cd(String dir) {
-        if (dir.equals("..")) {
-            Folder tmp = cwd.getParent();
-            if (tmp != null) {
-                cwd = tmp;
-                pushText("Switch to " + cwd.getName() + " directory");
-            }
-        } else {
-            Folder tmp = cwd.getFolder(dir);
-            if (tmp != null) {
-                cwd = tmp;
-                pushText("Switch to " + cwd.getName() + " directory");
-            } else pushText("Error : folder '" + dir + "' not found");
-        }
-    }
-
-    private void displayMailInfo(boolean runAsRoot) {
-        pushText("Welcome " + Users.getUsername(user) + ". Mailbox content :");
-        if (runAsRoot || user == Users.Manager) {
-            Folder tmp = cwd.getFolder("StaffOnly");
-            if (tmp != null) cwd = tmp;
-        }
-        cwd = cwd.getFolder("mail");
-        System.out.println(cwd.getContent(runAsRoot ? Users.Manager : user));
-        for (String line : cwd.getContent(runAsRoot ? Users.Manager : user).split("\n")) {
-            pushText(line.substring(0, line.length() - 4));
-        }
-        pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail1.");
-        cwd = cwd.getParent();
-        if (runAsRoot) cwd = cwd.getParent();
-    }
-
-    private void displayMailContent(ArrayList<String> mailNumbers, boolean runAsRoot) {
-        // TODO : show mail from home dir (careful if in documents)
-        if (runAsRoot || user == Users.Manager) {
-            Folder tmp = cwd.getFolder("StaffOnly");
-            if (tmp != null) cwd = tmp;
-        }
-        cwd = cwd.getFolder("mail");
-        for (String mailNumber : mailNumbers) {
-            pushText("Mail " + mailNumber + " :");
-            for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(runAsRoot ? Users.Manager : user).split("\n")) {
-                pushText(line);
-            }
-        }
-        cwd = cwd.getParent();
-        if (runAsRoot) cwd = cwd.getParent();
-    }
-
-    private void cat(ArrayList<String> filenames, boolean runAsRoot) {
-        ArrayList<File> files = new ArrayList<>();
-        for (String filename : filenames) {
-            File fileFound = cwd.getFile(filename);
-            if (fileFound == null) {
-                pushText("File '" + filename + "' not found");
-                return;
-            }
-            files.add(fileFound);
-        }
-        for (File file : files) {
-            String[] lines = file.getContent(runAsRoot ? Users.Manager : user).split("\n");
-            pushText(file.getName() + " : ");
-            if (lines.length == 1 && lines[0].equals("")) {
-                insufficientPermission();
-            } else {
-                ls(file.getContent(user));
-            }
-        }
-    }
-
-    private void whoami() {
-        pushText(Users.getUsername(user));
-    }
-
-    private void su(String username) {
-        if (username.equals("theo")) {
-            pushText("Password:");
-            waitingForPassword = true;
-        } else {
-            user = Users.getUser(username);
-            pushText("Current user changed to '" + Users.getUsername(user) + "'");
-            prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
-        }
-    }
-
-    private void tooManyArguments(String initialInputCommand) {
-        pushText("Error : too many arguments for command '" + initialInputCommand + "'");
-    }
-
-    private void invalidUsername(Action resultAction) {
-        pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
-    }
-
-    private void invalidMailID(ArrayList<String> IDs) {
-        StringBuilder mails = new StringBuilder();
-        for (String s : IDs) mails.append(s);
-        pushText("Error : invalid mail ID in '" + mails + "'");
-    }
-
-    private void invalidFlag(String arg, String initialInputCommand) {
-        pushText("Error : invalid flag '" + arg + "' for command '" + initialInputCommand + "'");
-    }
-
-    private void listCrons() {
-        pushText("# Reboot slaves' brains daily");
-        pushText("* * /1 * * rebot");
-        pushText("");
-        pushText("Error line 2 : 'rebot' command not found.");
-        pushText("");
-        pushText("READ-ONLY filesystem in DEBUG mode.");
-        pushText("In DEBUG mode, you can sudo without password.");
-    }
-
-    private void reboot() {
-        pushText("Reboot is already scheduled by the system and should not be triggered manually.");
-    }
-
-    private void insufficientPermission() {
-        pushText("Insufficient permission");
-    }
-
-    private void shutdown() throws IOException, ParseException {
-        FadeTransition ft = FadeOutTransition.playFromStartOn(rootPane, new Duration(1500));
-        ft.setOnFinished(event -> {
-            try {
-                clear();
-                initialize();
-            } catch (IOException | ParseException e) {
-                throw new RuntimeException(e);
-            }
-            FadeInTransition.playFromStartOn(rootPane, new Duration(1500));
-        });
-        ft.playFromStart();
-
-    }
-
-    private void notEnoughArgsKill(String initialInputCommand) {
-        notEnoughArgs(initialInputCommand);
-        pushText("Usage : kill [pid]");
-    }
-
-    private String formatLines() {
-        StringBuilder bobTheBuilder = new StringBuilder();
-        for (int i = 0; i < lines.size(); i++) {
-            bobTheBuilder.append(lines.get(i));
-            if (i != lines.size() - 1) bobTheBuilder.append("\n");
-        }
-        return bobTheBuilder.toString();
     }
 
     /**
@@ -377,11 +166,8 @@ public class MainSceneController extends Controller {
      * @param text The text to display
      */
     private void pushText(String text) {
-        if (lineCount == MAX_LINES) {
-            lines.remove(0);
-        } else lineCount++;
-        lines.add(text);
-        historyLabel.setText(formatLines());
+        linesBuffer.add(text);
+        historyLabel.setText(linesBuffer.formatBufferContent());
     }
 
     public void video() {
@@ -407,5 +193,207 @@ public class MainSceneController extends Controller {
         Scene scene = new Scene(mainPane, 1280, 720);
 
         App.setScene(scene);
+    }
+
+
+
+    private class ResultActionHandler {
+        private void handleKILL(String arg) {
+            // TODO : check if arg is a number
+            int pid;
+            try {
+                pid = Integer.parseInt(arg);
+            } catch (NumberFormatException e) {
+                pushText("The argument must be a PID.");
+                return;
+            }
+            switch (pid) {
+                case 2177 -> video();
+                case 2178 -> pushText("Can't kill process mngr. Important tasks are running.");
+                case 2179 -> pushText("Can't kill process theo. Important tasks are running.");
+                default -> pushText("Error : process " + arg + " not found");
+            }
+        }
+
+        private void handleGETPID(String arg) {
+            switch (arg) {
+                case "user" -> pushText("PID of user : 2177");
+                case "mngr" -> pushText("PID of mngr : 2178");
+                case "theo" -> pushText("PID of theo : 2179");
+                default -> pushText("Error : process " + arg + " not found");
+            }
+        }
+
+        private void handleCLEAR() {
+            for (int i = 0; i < MAX_LINES; i++) {
+                pushText("");
+            }
+        }
+
+        private void handleERROR_NOT_ENOUGH_ARGS(String initialInputCommand) {
+            pushText("Error : not enough arguments for command '" + initialInputCommand + "'");
+        }
+
+        private void handlerERROR_COMMAND_NOT_FOUND(String initialInputCommand) {
+            if (waitingForPassword) {
+                if (initialInputCommand.equals("4-8-15-16-23-42")) {
+                    user = Users.CEO;
+                    pushText("Current user changed to '" + Users.getUsername(user) + "'");
+                    prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+                } else {
+                    pushText("Incorrect password.");
+                    waitingForPassword = false;
+                }
+            } else {
+                pushText("Error : command '" + initialInputCommand + "' not found");
+            }
+        }
+
+        private void handleDISPLAY_DIRECTORY(String content) {
+            for (String line : content.split("\n")) {
+                pushText(line);
+            }
+        }
+
+        private void handleCHANGE_DIRECTORY(String dir) {
+            if (dir.equals("..")) {
+                Folder tmp = cwd.getParent();
+                if (tmp != null) {
+                    cwd = tmp;
+                    pushText("Switched to " + cwd.getName() + " directory");
+                }
+            } else {
+                Folder tmp = cwd.getFolder(dir);
+                if (tmp != null) {
+                    cwd = tmp;
+                    pushText("Switched to " + cwd.getName() + " directory");
+                } else pushText("Error : folder '" + dir + "' not found");
+            }
+        }
+
+        private void handleDISPLAY_MAIL_INFO(boolean runAsRoot) {
+            pushText("Welcome " + Users.getUsername(user) + ". Mailbox content :");
+            if (runAsRoot || user == Users.Manager) {
+                Folder tmp = cwd.getFolder("StaffOnly");
+                if (tmp != null) cwd = tmp;
+            }
+            cwd = cwd.getFolder("mail");
+            System.out.println(cwd.getContent(runAsRoot ? Users.Manager : user));
+            for (String line : cwd.getContent(runAsRoot ? Users.Manager : user).split("\n")) {
+                pushText(line.substring(0, line.length() - 4));
+            }
+            pushText("Read mail via 'mail <number>', i.e. : 'mail 1' to read mail1.");
+            cwd = cwd.getParent();
+            if (runAsRoot) cwd = cwd.getParent();
+        }
+
+        private void handleDISPLAY_MAIL_CONTENT(ArrayList<String> mailNumbers, boolean runAsRoot) {
+            // TODO : show mail from home dir (careful if in documents)
+            if (runAsRoot || user == Users.Manager) {
+                Folder tmp = cwd.getFolder("StaffOnly");
+                if (tmp != null) cwd = tmp;
+            }
+            cwd = cwd.getFolder("mail");
+            for (String mailNumber : mailNumbers) {
+                pushText("Mail " + mailNumber + " :");
+                for (String line : cwd.getFile("mail" + mailNumber + ".txt").getContent(runAsRoot ? Users.Manager : user).split("\n")) {
+                    pushText(line);
+                }
+            }
+            cwd = cwd.getParent();
+            if (runAsRoot) cwd = cwd.getParent();
+        }
+
+        private void handleDISPLAY_CONTENT_OF_FILE(ArrayList<String> filenames, boolean runAsRoot) {
+            ArrayList<File> files = new ArrayList<>();
+            for (String filename : filenames) {
+                File fileFound = cwd.getFile(filename);
+                if (fileFound == null) {
+                    pushText("File '" + filename + "' not found");
+                    return;
+                }
+                files.add(fileFound);
+            }
+            for (File file : files) {
+                String[] lines = file.getContent(runAsRoot ? Users.Manager : user).split("\n");
+                pushText(file.getName() + " : ");
+                if (lines.length == 1 && lines[0].equals("")) {
+                    handleINSUFFICIENT_PERMISSION();
+                } else {
+                    handleDISPLAY_DIRECTORY(file.getContent(user));
+                }
+            }
+        }
+
+        private void handleDISPLAY_CURRENT_USER() {
+            pushText(Users.getUsername(user));
+        }
+
+        private void handleCHANGE_USER(String username) {
+            if (username.equals("theo")) {
+                pushText("Password:");
+                waitingForPassword = true;
+            } else {
+                user = Users.getUser(username);
+                pushText("Current user changed to '" + Users.getUsername(user) + "'");
+                prefixLabel.setText("[" + Users.getUsername(user) + "@edoo ~]$");
+            }
+        }
+
+        private void handleERROR_TOO_MANY_ARGS(String initialInputCommand) {
+            pushText("Error : too many arguments for command '" + initialInputCommand + "'");
+        }
+
+        private void handleINVALID_USERNAME(Action resultAction) {
+            pushText("Error : invalid username '" + resultAction.getArgs().get(0) + "'");
+        }
+
+        private void handleINVALID_MAIL_ID(ArrayList<String> IDs) {
+            StringBuilder mails = new StringBuilder();
+            for (String s : IDs) mails.append(s);
+            pushText("Error : invalid mail ID in '" + mails + "'");
+        }
+
+        private void handleINVALID_FLAG(String arg, String initialInputCommand) {
+            pushText("Error : invalid flag '" + arg + "' for command '" + initialInputCommand + "'");
+        }
+
+        private void handleLIST_CRONS() {
+            pushText("# Reboot slaves' brains daily");
+            pushText("* * /1 * * rebot");
+            pushText("");
+            pushText("Error line 2 : 'rebot' command not found.");
+            pushText("");
+            pushText("READ-ONLY filesystem in DEBUG mode.");
+            pushText("In DEBUG mode, you can sudo without password.");
+        }
+
+        private void handleREBOOT() {
+            pushText("Reboot is already scheduled by the system and should not be triggered manually.");
+        }
+
+        private void handleINSUFFICIENT_PERMISSION() {
+            pushText("Insufficient permission");
+        }
+
+        private void handleSHUTDOWN() throws IOException, ParseException {
+            FadeTransition ft = FadeOutTransition.playFromStartOn(rootPane, new Duration(1500));
+            ft.setOnFinished(event -> {
+                try {
+                    handleCLEAR();
+                    initialize();
+                } catch (IOException | ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                FadeInTransition.playFromStartOn(rootPane, new Duration(1500));
+            });
+            ft.playFromStart();
+
+        }
+
+        private void handleERROR_NOT_ENOUGH_ARGS_KILL(String initialInputCommand) {
+            handleERROR_NOT_ENOUGH_ARGS(initialInputCommand);
+            pushText("Usage : kill [pid]");
+        }
     }
 }
