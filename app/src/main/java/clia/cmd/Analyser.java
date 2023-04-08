@@ -13,40 +13,25 @@ public class Analyser {
     }
 
     public static Command analyse(String input, Users issuer) {
-        ArrayList<String> lexems = new ArrayList<>(Arrays.asList(input.split(" ")));
-        String cmd = lexems.get(0);
-        lexems.remove(0);
-        switch (cmd) {
-            case "ls":
-                return new Command(Commands.LS, lexems, issuer);
-            case "cd":
-                return new Command(Commands.CD, lexems, issuer);
-            case "browser":
-                return new Command(Commands.BROWSER, issuer);
-            case "cat":
-                return new Command(Commands.CAT, lexems, issuer);
-            case "mail":
-                return new Command(Commands.MAIL, lexems, issuer);
-            case "su":
-                return new Command(Commands.SU, lexems, issuer);
-            case "whoami":
-                return new Command(Commands.WHOAMI, issuer);
-            case "clear":
-                return new Command(Commands.CLEAR, issuer);
-            case "shutdown":
-                return new Command(Commands.SHUTDOWN, issuer);
-            case "reboot":
-                return new Command(Commands.REBOOT, issuer);
-            case "crontab":
-                return new Command(Commands.CRONTAB, lexems, issuer);
-            case "sudo":
-                return new Command(Commands.SUDO, lexems, issuer);
-            case "kill":
-                return new Command(Commands.KILL, lexems, issuer);
-            case "getpid":
-                return new Command(Commands.GETPID, lexems, issuer);
-            default:
-                return new Command(Commands.NOT_FOUND, issuer);
-        }
+        ArrayList<String> lexemes = new ArrayList<>(Arrays.asList(input.split(" ")));
+        String cmd = lexemes.get(0);
+        lexemes.remove(0);
+        return switch (cmd) {
+            case "ls" -> new Command(Commands.LS, lexemes, issuer);
+            case "cd" -> new Command(Commands.CD, lexemes, issuer);
+            case "browser" -> new Command(Commands.BROWSER, issuer);
+            case "cat" -> new Command(Commands.CAT, lexemes, issuer);
+            case "mail" -> new Command(Commands.MAIL, lexemes, issuer);
+            case "su" -> new Command(Commands.SU, lexemes, issuer);
+            case "whoami" -> new Command(Commands.WHOAMI, issuer);
+            case "clear" -> new Command(Commands.CLEAR, issuer);
+            case "shutdown" -> new Command(Commands.SHUTDOWN, issuer);
+            case "reboot" -> new Command(Commands.REBOOT, issuer);
+            case "crontab" -> new Command(Commands.CRONTAB, lexemes, issuer);
+            case "sudo" -> new Command(Commands.SUDO, lexemes, issuer);
+            case "kill" -> new Command(Commands.KILL, lexemes, issuer);
+            case "getpid" -> new Command(Commands.GETPID, lexemes, issuer);
+            default -> new Command(Commands.NOT_FOUND, issuer);
+        };
     }
 }

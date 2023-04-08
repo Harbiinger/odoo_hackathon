@@ -5,10 +5,10 @@ import clia.back.fs.Users;
 import java.util.ArrayList;
 
 public class Command {
-    private Commands cmd;
+    private final Commands cmd;
     private ArrayList<String> args;
     private boolean isRoot = false;
-    private Users issuer;
+    private final Users issuer;
 
     public Command(Commands cmd, ArrayList<String> args, boolean isRoot, Users issuer) {
         this.cmd = cmd;

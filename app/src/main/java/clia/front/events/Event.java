@@ -15,13 +15,13 @@ package clia.front.events;
  * example, an event handling response could be to set the visibility of the text message to true, in order to show
  * the text to the user indicating that his input was invalid.
  */
-public class InvalidInputEvent extends AbstractInvalidInputEvent {
-    public InvalidInputEvent() {
-        super(AbstractInvalidInputEvent.INVALID_VALUE);
+public class Event extends AbstractEvent {
+    public Event() {
+        super(AbstractEvent.INVALID_VALUE);
     }
 
     @Override
-    public void invokeHandler(InvalidInputEventHandler handler) {
+    public void invokeHandler(EventHandler handler) {
         handler.onEvent();
     }
 }

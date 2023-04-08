@@ -25,7 +25,6 @@ public class App extends Application {
         stage.setWidth(1280);
         stage.setHeight(720);
         stage.setScene(Scenes.MainScene);
-        stage.setFullScreen(true);
         stage.setFullScreenExitHint("");
         stage.show();
     }

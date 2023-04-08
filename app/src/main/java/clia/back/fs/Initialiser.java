@@ -72,7 +72,7 @@ public class Initialiser {
     public static void main(String[] args) throws IOException, ParseException {
         Path path = Paths.get(System.getProperty("user.dir"));
         String stringPath = path.toString();
-        stringPath = stringPath + "/app/src/main/resources/gameData/data.json";
+        stringPath = stringPath + "/app/src/main/resources/files/filesystem.json";
         Initialiser init = new Initialiser(stringPath);
         Folder fs = init.Init();
         System.out.println(fs.getContent(Users.CEO));
